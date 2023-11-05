@@ -6,8 +6,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+	<PropertyGroup>
+		<UseRazorSourceGenerator>false</UseRazorSourceGenerator>
+	</PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="MediatR" Version="12.1.1" />
   </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Manazor.Application\Manazor.Application.csproj" />
+		<ProjectReference Include="..\Manazor.Persistence\Manazor.Persistence.csproj" />
+	</ItemGroup>
 
 </Project>

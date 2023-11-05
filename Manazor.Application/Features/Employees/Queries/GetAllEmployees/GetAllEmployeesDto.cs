@@ -10,5 +10,7 @@ namespace Manazor.Application.Features.Employees.Queries.GetAllEmployees
 {
 	public class GetAllEmployeesDto : IMapFrom<Employee>
 	{
+		public string Name { get; set; } = null!;
+		public string Surname { get; set; } = null!;
 	}
 }

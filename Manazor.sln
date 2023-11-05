@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manazor.Persistence", "Mana
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manazor.WebUI", "Manazor.WebUI\Manazor.WebUI.csproj", "{580E7A4E-05CE-4BBB-AF5B-7EF82B29C6FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manazor.Application", "Manazor.Application\Manazor.Application.csproj", "{B12438D7-3EC4-4B88-B427-CBDBA0E8A417}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manazor.Application", "Manazor.Application\Manazor.Application.csproj", "{B12438D7-3EC4-4B88-B427-CBDBA0E8A417}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

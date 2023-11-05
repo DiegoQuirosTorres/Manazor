@@ -1,0 +1,42 @@
+﻿@page "/employees"
+@using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
+@using MediatR
+@inject IMediator Mediator
+
+<PageTitle>Employees</PageTitle>
+
+<h1>Employees</h1>
+
+@if (employees == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var e in employees)
+            {
+                <tr>
+                    <td>@e.Name</td>
+                    <td>@e.Surname</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<GetAllEmployeesDto>? employees;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await Mediator.Send(new GetAllEmployees());
+    }
+}
