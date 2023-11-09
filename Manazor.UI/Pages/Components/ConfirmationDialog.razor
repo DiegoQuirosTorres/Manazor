@@ -1,0 +1,26 @@
+﻿<MudDialog MaxWidth="sm">
+    <DialogContent>
+        <p>Are you sure you want to perform this action?</p>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Default" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Info" OnClick="Confirm">Confirm</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public Action callback { get; set; } = null!;
+
+    private async Task Confirm()
+    {
+        callback.Invoke();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

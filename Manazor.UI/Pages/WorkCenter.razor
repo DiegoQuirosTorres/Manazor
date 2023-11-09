@@ -1,0 +1,84 @@
+﻿@page "/centers"
+@using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
+@using Manazor.UI.Pages.Forms;
+@using MediatR
+@inject IMediator Mediator
+@inject IDialogService DialogService
+
+<PageTitle>WorkCenters</PageTitle>
+
+@if (workCenters == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <MudText Class="mb-2" Typo="Typo.h6">Work Centers</MudText>
+
+    <MudDataGrid T="GetAllWorkCentersDto" MultiSelection="true" Items="@workCenters" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+                 Hideable="true">
+        <ToolBarContent>
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mw-100"></MudTextField>
+            <MudSpacer />
+            <MudButton OnClick="OpenDialog" Class="me-2" Variant="Variant.Filled" Color="Color.Info">Add <MudIcon Icon="@Icons.Material.Filled.Add"></MudIcon></MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x!.Denomination" />
+            <PropertyColumn Property="x => x!.Province" />
+            <PropertyColumn Property="x => x!.City" />
+            <PropertyColumn Property="x => x!.Address" />
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="GetAllWorkCentersDto" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+@code {
+    private List<GetAllWorkCentersDto>? workCenters;
+    private string _searchString;
+
+    private Func<GetAllWorkCentersDto, bool> _quickFilter => x =>
+      {
+          if (string.IsNullOrWhiteSpace(_searchString))
+              return true;
+
+          if (x.Denomination.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+              return true;
+
+          if (x.Province.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+              return true;
+
+          if (x.City.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+              return true;
+
+          if (x.Address.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+              return true;
+
+          return false;
+      };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateDataAsync();
+    }
+
+    private async Task UpdateDataAsync()
+    {
+        workCenters = await Mediator.Send(new GetAllWorkCenters());
+        StateHasChanged();
+    }
+
+    private void OpenDialog()
+    {
+        var updateCallback = new Action(async () =>
+        {
+            await UpdateDataAsync();
+        });
+
+        var parameters = new DialogParameters<WorkCentersForm> { { x => x.callback, updateCallback } };
+
+        DialogService.Show<WorkCentersForm>("Options Dialog", parameters);
+    }
+}

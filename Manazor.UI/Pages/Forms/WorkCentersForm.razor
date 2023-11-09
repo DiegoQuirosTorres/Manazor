@@ -1,0 +1,47 @@
+﻿@using Manazor.Application.Features.WorkCenters.Commands.Create;
+@using MediatR;
+@inject IMediator Mediator
+<MudDialog Style="width: 100rem;">
+    <DialogContent>
+        <MudForm Model="command">
+
+            <MudTextField Class="col col-6" Label="Denomination" @bind-Value="command.Denomination" Required="true" />
+
+            <div class="row d-flex justify-content-between">
+                <MudTextField Label="City" @bind-Value="command.City" Required="true" />
+                <MudSpacer></MudSpacer>
+                <MudTextField Label="Province" @bind-Value="command.Province" Required="true" />
+            </div>
+
+            <MudTextField Label="Address" @bind-Value="command.Address" Required="true" />
+
+            <div class="row d-flex mt-2" style="justify-content: end">
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Color="Color.Info" OnClick="Submit">Save</MudButton>
+            </div>
+
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public Action callback { get; set; } = null!;
+
+    private CreateWorkCenterCommand command = new CreateWorkCenterCommand();
+
+    private async Task Submit()
+    {
+        await Mediator.Send(command);
+
+        callback.Invoke();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

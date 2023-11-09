@@ -1,4 +1,5 @@
 ﻿using Manazor.Domain.Entities;
+using Manazor.Domain.Entities.WorkCenterModule;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,9 @@ namespace Manazor.Persistence.Contexts
 		{ }
 
 		public DbSet<Employee> Employees => Set<Employee>();
+        public DbSet<WorkCenter> WorkCenters => Set<WorkCenter>();
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

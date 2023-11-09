@@ -1,0 +1,59 @@
+﻿@page "/upload"
+
+@inherits ComponentBase
+
+<MudCard Class="w-100 h-100 p-2">
+    <div style="width: max-content; height: max-content; position: relative; background-color: rgb(244, 244, 244);">
+        @if (imageData == null)
+        {
+            <img src="@placeholderImage" alt="Placeholder" class="card-img-top" style="height: 12rem; width: 10rem; object-fit: scale-down;" />
+            <div class="card-body text-center" style="position: absolute; bottom: 15px; right: 15px;">
+                <MudFileUpload T="IBrowserFile" Context="fileInput" FilesChanged="HandleFileUpload">
+                    <ButtonTemplate>
+                        <MudFab HtmlTag="label"
+                                Color="Color.Info"
+                                Size="Size.Small"
+                                Icon="@Icons.Material.Filled.AttachFile"
+                                for="@fileInput" />
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </div>
+        }
+        else
+        {
+            <img src="@($"data:image/png;base64,{Convert.ToBase64String(imageData)}")"
+                 alt="Uploaded Image" class="img-thumbnail"
+                 style="height: 12rem; width: 10rem; object-fit: fill;" />
+
+            <MudFab Style="position: absolute; bottom: 15px; right: 15px;" 
+                OnClick="ClearPhoto" 
+                Size="Size.Small"
+                Color="Color.Secondary" 
+                StartIcon="@Icons.Material.Filled.Delete" />
+        }
+
+    </div>
+</MudCard>
+
+@code
+{
+    private string placeholderImage = "assets/placeholder/placeholder.jpg";
+    private byte[] imageData;
+
+    private async Task HandleFileUpload(IBrowserFile file)
+    {
+        if (file != null)
+        {
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.OpenReadStream().CopyToAsync(memoryStream);
+                imageData = memoryStream.ToArray();
+            }
+        }
+    }
+
+    private void ClearPhoto()
+    {
+        imageData = null;
+    }
+}

@@ -14,12 +14,12 @@ namespace Manazor.Application.Features.Employees.Queries.GetAllEmployees
 {
 	public record GetAllEmployees : IRequest<List<GetAllEmployeesDto>>;
 
-	internal class GetAllPlayersQueryHandler : IRequestHandler<GetAllEmployees, List<GetAllEmployeesDto>>
+	internal class GetAllEmployeesQueryHandler : IRequestHandler<GetAllEmployees, List<GetAllEmployeesDto>>
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
 
-		public GetAllPlayersQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+		public GetAllEmployeesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
 		{
 			_unitOfWork = unitOfWork;
 			_mapper = mapper;
