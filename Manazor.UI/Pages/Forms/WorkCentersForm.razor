@@ -1,7 +1,7 @@
 ﻿@using Manazor.Application.Features.WorkCenters.Commands.Create;
 @using MediatR;
 @inject IMediator Mediator
-<MudDialog Style="width: 100rem;">
+<MudDialog IsVisibleChanged="DialogVisibleChanged" Style="width: 100rem;">
     <DialogContent>
         <MudForm Model="command">
 
@@ -28,8 +28,16 @@
 {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Action callback { get; set; } = null!;
+    [Parameter] public bool isEdit { get; set; }
+    [Parameter] public CreateWorkCenterCommand command { get; set; } = new CreateWorkCenterCommand();
 
-    private CreateWorkCenterCommand command = new CreateWorkCenterCommand();
+    void DialogVisibleChanged(bool isVisible)
+    {
+        if (isVisible)
+        {
+            Console.WriteLine("El diálogo se ha abierto. Ejecutando función...");
+        }
+    }
 
     private async Task Submit()
     {
