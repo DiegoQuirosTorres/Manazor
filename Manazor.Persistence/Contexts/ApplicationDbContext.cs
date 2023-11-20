@@ -1,4 +1,5 @@
 ﻿using Manazor.Domain.Entities;
+using Manazor.Domain.Entities.WarehouseModule;
 using Manazor.Domain.Entities.WorkCenterModule;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,6 +19,7 @@ namespace Manazor.Persistence.Contexts
 
 		public DbSet<Employee> Employees => Set<Employee>();
         public DbSet<WorkCenter> WorkCenters => Set<WorkCenter>();
+		public DbSet<Warehouse> Warehouses => Set<Warehouse>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

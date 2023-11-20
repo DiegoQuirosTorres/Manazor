@@ -1,3 +1,4 @@
+using BlazorSpinner;
 using Manazor.Application.Extensions;
 using Manazor.Persistence.Extensions;
 using Manazor.UI.Data;
@@ -20,6 +21,7 @@ builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMudServices();
 builder.Services.AddApplicationLayer();
 builder.Services.AddPersistenceLayer(builder.Configuration);
+builder.Services.AddScoped<SpinnerService>();
 
 var app = builder.Build();
 

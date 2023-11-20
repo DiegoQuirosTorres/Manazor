@@ -13,30 +13,62 @@
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Surname</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var e in employees)
-            {
-                <tr>
-                    <td>@e.Name</td>
-                    <td>@e.Surname</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudText Class="mb-2" Typo="Typo.h6">Employees</MudText>
+
+    <MudDataGrid T="GetAllEmployeesDto" MultiSelection="true" Items="@employees" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+                 Hideable="true">
+        <ToolBarContent>
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mw-100"></MudTextField>
+            <MudSpacer />
+            <MudButton OnClick="() => OpenDialog(true, null)" Class="me-2" Variant="Variant.Filled" Color="Color.Info">Add <MudIcon Icon="@Icons.Material.Filled.Add"></MudIcon></MudButton>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Name" />
+            <PropertyColumn Property="x => x.Surname" />
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="_ => OpenDialog(true, context.Item)" />
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="GetAllWorkCentersDto" />
+        </PagerContent>
+    </MudDataGrid>
 }
 
 @code {
     private List<GetAllEmployeesDto>? employees;
+    private string _searchString;
 
     protected override async Task OnInitializedAsync()
     {
+        await UpdateDataAsync();
+    }
+
+    private Func<GetAllEmployeesDto, bool> _quickFilter => x =>
+      {
+          if (string.IsNullOrWhiteSpace(_searchString))
+              return true;
+
+          if (x.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+              return true;
+
+          if (x.Surname.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+              return true;
+
+          return false;
+      };
+
+    private async Task UpdateDataAsync()
+    {
         employees = await Mediator.Send(new GetAllEmployees());
+        StateHasChanged();
+    }
+
+    private void OpenDialog(bool isEdit, GetAllEmployeesDto? dto)
+    {
+        //
     }
 }

@@ -1,4 +1,5 @@
 ﻿@using Manazor.Application.Features.WorkCenters.Commands.Create;
+@using Manazor.Application.Features.WorkCenters.Commands.Update;
 @using MediatR;
 @inject IMediator Mediator
 <MudDialog IsVisibleChanged="DialogVisibleChanged" Style="width: 100rem;">
@@ -29,6 +30,7 @@
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
     [Parameter] public Action callback { get; set; } = null!;
     [Parameter] public bool isEdit { get; set; }
+    [Parameter] public int? id { get; set; }
     [Parameter] public CreateWorkCenterCommand command { get; set; } = new CreateWorkCenterCommand();
 
     void DialogVisibleChanged(bool isVisible)
@@ -41,7 +43,22 @@
 
     private async Task Submit()
     {
-        await Mediator.Send(command);
+        if (isEdit)
+        {
+            UpdateWorkCenterCommand workCenter = new UpdateWorkCenterCommand
+                {
+                    Address = command.Address,
+                    City = command.City,
+                    Denomination = command.Denomination,
+                    Province = command.Province,
+                    Id = id!.Value,
+                };
+            await Mediator.Send(workCenter);
+        }
+        else
+        {
+            await Mediator.Send(command);
+        }
 
         callback.Invoke();
 
