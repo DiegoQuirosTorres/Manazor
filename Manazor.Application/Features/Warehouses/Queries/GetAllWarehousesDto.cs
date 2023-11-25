@@ -13,5 +13,8 @@ namespace Manazor.Application.Features.Warehouses.Queries
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
+        public int WorkCenterId { get; set; }
+        public string WorkCenterName { get; set; } = string.Empty;
+        public string WorkCenterAddress { get;set; } = string.Empty;
     }
 }

@@ -1,0 +1,105 @@
+﻿@using Manazor.Application.Features.Categories.Command.Create;
+@using Manazor.Application.Features.Categories.Command.Edit;
+@using Manazor.UI.Data;
+@using MediatR;
+@using MudBlazor.Utilities;
+@inject IMediator Mediator
+<MudDialog Style="width: 100rem;">
+    <DialogContent>
+        <MudForm>
+            <div class="flex-row d-flex justify-content-between">
+                <div class="d-flex flex-column justify-content-between">
+
+                    <MudSelect Class="mb-5" @bind-Value="SelectedIconId" T="int" Label="Icon" AdornmentIcon="@Icons.Material.Filled.Search" AnchorOrigin="Origin.BottomCenter">
+                        @foreach (var iconEntry in IconList.IconDictionary)
+                        {
+                            <MudSelectItem T="int" Value="@iconEntry.Key"><MudIcon Icon="@iconEntry.Value"></MudIcon></MudSelectItem>
+                        }
+                    </MudSelect>
+
+                    <MudColorPicker @bind-Value="PickerColor" DisableToolbar="true" ColorPickerMode="ColorPickerMode" PickerVariant="PickerVariant.Static" />
+                </div>
+
+                <div class="mx-auto d-flex align-items-center flex-column justify-content-between">
+                    <MudIcon Style="@GetStyle().ToString()" Icon="@GetIconValue().ToString()"></MudIcon>
+                    <MudTextField @bind-Value="CategoryName" Label="Name" Variant="Variant.Text"></MudTextField>
+                </div>
+            </div>
+            <div class="row d-flex mt-2" style="justify-content: end">
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Color="Color.Info" OnClick="Submit">Save</MudButton>
+            </div>
+
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    public ColorPickerMode ColorPickerMode = ColorPickerMode.RGB;
+    [Parameter] public bool IsEdit { get; set; }
+    [Parameter] public Action Callback { get; set; } = null!;
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public int SelectedIconId { get; set; } = 1;
+    [Parameter] public MudColor PickerColor { get; set; } = "#594AE2";
+    [Parameter] public string CategoryName { get; set; } = "";
+
+    private async Task Submit()
+    {
+        if (IsEdit)
+        {
+            EditCategoriesCommand command = new EditCategoriesCommand
+                {
+                    Id = Id!.Value,
+                    Color = PickerColor.ToString(),
+                    LogoId = SelectedIconId,
+                    Name = CategoryName,
+                };
+
+            await Mediator.Send(command);
+        }
+        else
+        {
+            CreateCategoriesCommand command = new CreateCategoriesCommand
+                {
+                    Color = PickerColor.ToString(),
+                    LogoId = SelectedIconId,
+                    Name = CategoryName,
+                };
+
+            await Mediator.Send(command);
+        }
+
+        Callback.Invoke();
+
+        this.CategoryName = "";
+        this.PickerColor = "#594AE2";
+        this.SelectedIconId = 1;
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private string GetIconValue()
+    {
+        if (IconList.IconDictionary.ContainsKey(SelectedIconId))
+        {
+            return IconList.IconDictionary[SelectedIconId];
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private string GetStyle()
+    {
+        return "font-size: 10rem; color: " + PickerColor.ToString();
+    }
+
+    private void Cancel()
+    {
+
+        MudDialog.Cancel();
+    }
+}

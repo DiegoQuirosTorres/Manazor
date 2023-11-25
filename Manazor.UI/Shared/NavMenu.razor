@@ -1,8 +1,17 @@
-﻿<MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>
-    <MudNavLink Href="employees" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Employees</MudNavLink>
-    <MudNavLink Href="centers" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Place">Work Centers</MudNavLink>
-    <MudNavLink Href="upload" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Upload</MudNavLink>
+﻿<MudNavMenu >
+    <MudNavLink ActiveClass="custom-active" Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+    <MudNavLink ActiveClass="custom-active" Href="employees" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Employees</MudNavLink>
+    <MudNavLink ActiveClass="custom-active" Href="centers" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Place">Work Centers</MudNavLink>
+    <MudNavLink ActiveClass="custom-active" Href="warehouses" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Warehouse">Warehouses</MudNavLink>
+    <MudNavLink ActiveClass="custom-active" Href="upload" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Upload</MudNavLink>
+    <MudNavGroup Title="Products" Icon="@Icons.Material.Filled.Computer" Expanded="true">
+        <MudNavLink ActiveClass="custom-active" Href="products" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.FormatListBulleted">Products list</MudNavLink>
+        <MudNavLink ActiveClass="custom-active" Href="categories" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PlaylistAdd">Categories</MudNavLink>
+    </MudNavGroup>
+    <MudNavLink ActiveClass="custom-active" Href="upload" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person">Sales</MudNavLink>
 </MudNavMenu>
+<style>
+    .custom-active {
+        color: white;
+    }
+</style>

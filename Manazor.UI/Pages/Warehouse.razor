@@ -1,5 +1,7 @@
 ﻿@page "/warehouses"
 @using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
+@using Manazor.Application.Features.Warehouses.Command.Create;
+@using Manazor.Application.Features.Warehouses.Queries;
 @using Manazor.Application.Features.WorkCenters.Commands.Create;
 @using Manazor.UI.Pages.Forms;
 @using MediatR
@@ -8,15 +10,15 @@
 
 <PageTitle>Warehouses</PageTitle>
 
-@if (workCenters == null)
+@if (warehouses == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    <MudText Class="mb-2" Typo="Typo.h6">Work Centers</MudText>
+    <MudText Class="mb-2" Typo="Typo.h6">Warehouses</MudText>
 
-    <MudDataGrid T="GetAllWorkCentersDto" MultiSelection="true" Items="@workCenters" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+    <MudDataGrid T="GetAllWarehousesDto" MultiSelection="true" Items="@warehouses" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
                  Hideable="true">
         <ToolBarContent>
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
@@ -25,13 +27,10 @@ else
             <MudButton OnClick="() => OpenDialog(false, null)" Class="me-2" Variant="Variant.Filled" Color="Color.Info">Add <MudIcon Icon="@Icons.Material.Filled.Add"></MudIcon></MudButton>
         </ToolBarContent>
         <Columns>
-            <PropertyColumn Property="x => x!.Denomination" />
-            <PropertyColumn Property="x => x!.Province" />
-            <PropertyColumn Property="x => x!.City" />
-            <PropertyColumn Property="x => x!.Address" />
+            <PropertyColumn Property="x => x!.Name" />
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="_ => OpenDialog(true, context.Item)" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="_ => {}" />
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
@@ -42,24 +41,15 @@ else
 }
 
 @code {
-    private List<GetAllWorkCentersDto>? workCenters;
+    private List<GetAllWarehousesDto>? warehouses;
     private string _searchString;
 
-    private Func<GetAllWorkCentersDto, bool> _quickFilter => x =>
+    private Func<GetAllWarehousesDto, bool> _quickFilter => x =>
       {
           if (string.IsNullOrWhiteSpace(_searchString))
               return true;
 
-          if (x.Denomination.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-              return true;
-
-          if (x.Province.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-              return true;
-
-          if (x.City.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
-              return true;
-
-          if (x.Address.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+          if (x.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
               return true;
 
           return false;
@@ -72,32 +62,27 @@ else
 
     private async Task UpdateDataAsync()
     {
-        workCenters = await Mediator.Send(new GetAllWorkCenters());
+        warehouses = await Mediator.Send(new GetAllWarehouses());
         StateHasChanged();
     }
 
-    private void OpenDialog(bool isEdit, GetAllWorkCentersDto? dto)
+    private async Task OpenDialog(bool isEdit, GetAllWarehousesDto? dto)
     {
         var updateCallback = new Action(async () =>
         {
             await UpdateDataAsync();
         });
 
-        DialogParameters parameters = new DialogParameters<WorkCentersForm>
+        DialogParameters parameters = new DialogParameters<WarehousesForm>
         {
+           { x => x.comboData, await Mediator.Send(new GetAllWorkCenters())},
            { x => x.callback, updateCallback },
            { x => x.isEdit, isEdit },
-           { x => x.command, dto != null ? new CreateWorkCenterCommand
-                    {
-                        Address = dto.Address,
-                        City = dto.City,
-                        Denomination = dto.Denomination,
-                        Province = dto.Province,
-                    }
-                    :  new CreateWorkCenterCommand() },
+           { x => x.command, dto != null ? null
+                    :  new CreateWarehouseCommand() },
            {x => x.id, dto != null ? dto.Id : null}
         };
 
-        DialogService.Show<WorkCentersForm>("Options Dialog", parameters);
+        DialogService.Show<WarehousesForm>("Warehouse", parameters);
     }
 }

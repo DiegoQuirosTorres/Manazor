@@ -29,9 +29,29 @@ namespace Manazor.Application.Features.Warehouses.Queries
 
         public async Task<List<GetAllWarehousesDto>> Handle(GetAllWarehouses request, CancellationToken cancellationToken)
         {
-            return await _unitOfWork.Repository<Warehouse>().Entities
-               .ProjectTo<GetAllWarehousesDto>(_mapper.ConfigurationProvider)
-               .ToListAsync(cancellationToken);
+            var dtos = await _unitOfWork.Repository<Warehouse>().Entities
+                   .Join(_unitOfWork.Repository<WorkCenter>().Entities,
+                            warehouse => warehouse.Id,
+                            workCenter => workCenter.Id,
+                     (warehouse, workCenter) => new GetAllWarehousesDto
+                     {
+                         Id = warehouse.Id,
+                         Name = warehouse.Name,
+                         WorkCenterId = workCenter.Id,
+                         WorkCenterName = workCenter.Denomination,
+                         WorkCenterAddress = workCenter.Address,
+                     })
+                    .ToListAsync(cancellationToken);     
+
+            /*foreach(GetAllWarehousesDto d in dtos)
+            {
+                var workCenter = await _unitOfWork.Repository<WorkCenter>()
+                    .GetByIdAsync(d.Id);
+                d.WorkCenterName = workCenter.Denomination;
+                d.WorkCenterAddress = workCenter.Address;
+            }*/
+
+            return dtos;
         }
     }
 }

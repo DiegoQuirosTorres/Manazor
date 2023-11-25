@@ -1,0 +1,98 @@
+﻿@using Manazor.Application.Features.Categories.Queries;
+@using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
+@using Manazor.Application.Features.Products;
+@using Manazor.Application.Features.Warehouses.Command.Create;
+@using Manazor.Application.Features.WorkCenters.Commands.Create;
+@using Manazor.Application.Features.WorkCenters.Commands.Update;
+@using Manazor.UI.Data;
+@using MediatR;
+@inject IMediator Mediator
+<MudDialog Style="width: 100rem;">
+    <DialogContent>
+        <MudForm Model="command">
+
+            <div class="row d-flex justify-content-between">
+                <MudTextField Label="Name" @bind-Value="command.Name" Required="true" />
+                <MudSpacer></MudSpacer>
+                <MudSelect T="int" Label="Categories "  MultiSelection="false" @bind-Value="command.Category">
+                    @foreach (var category in comboData)
+                    {
+                        <MudSelectItem T="int" Value=@category.Id>@category.Name <MudIcon Icon="@GetIconValue(category.LogoId)" Style="@GetStyle(category.Color)"></MudIcon></MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+
+            <div class="row d-flex justify-content-between">
+                Aqui iria descripción
+            </div>
+
+            <div class="row d-flex mt-2" style="justify-content: end">
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Color="Color.Info" OnClick="Submit">Save</MudButton>
+            </div>
+
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public Action callback { get; set; } = null!;
+    [Parameter] public bool isEdit { get; set; }
+    [Parameter] public int? id { get; set; }
+    [Parameter] public CreateProductsCommand command { get; set; } = new CreateProductsCommand();
+    [Parameter] public List<GetAllCategoriesDto> comboData { get; set; } = new();
+
+    private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
+
+    private async Task Submit()
+    {
+        if (isEdit)
+        {
+            /* UpdateWorkCenterCommand workCenter = new UpdateWorkCenterCommand
+                     {
+                     Address = command.Address,
+                     City = command.City,
+                     Denomination = command.Denomination,
+                     Province = command.Province,
+                     Id = id!.Value,
+             };
+             await Mediator.Send(workCenter);*/
+        }
+        else
+        {
+            await Mediator.Send(command);
+        }
+
+        callback.Invoke();
+
+        command = new();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private string GetIconValue(int iconId)
+    {
+        if (IconList.IconDictionary.ContainsKey(iconId))
+        {
+            return IconList.IconDictionary[iconId];
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private string GetStyle(string color)
+    {
+        return "font-size: 10rem; color: " + color;
+    }
+
+    private void Cancel()
+    {
+        command = new();
+
+        MudDialog.Cancel();
+    }
+}

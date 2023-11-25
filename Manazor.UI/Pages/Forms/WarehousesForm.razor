@@ -1,0 +1,77 @@
+﻿@using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
+@using Manazor.Application.Features.Warehouses.Command.Create;
+@using Manazor.Application.Features.WorkCenters.Commands.Create;
+@using Manazor.Application.Features.WorkCenters.Commands.Update;
+@using MediatR;
+@inject IMediator Mediator
+<MudDialog Style="width: 100rem;">
+    <DialogContent>
+        <MudForm Model="command">
+
+            <div class="row d-flex justify-content-between">
+                <MudTextField Label="Name" @bind-Value="command.Name" Required="true" />
+                <MudSpacer></MudSpacer>
+                <MudAutocomplete T="GetAllWorkCentersDto" Label="Workcenter" @bind-Value="command.WorkCenterDto" ToStringFunc="(i => DisplayValue(i))" SearchFunc="@SearchCombo"
+                                 AdornmentIcon="@Icons.Material.Filled.Search"  />
+            </div>
+
+            <div class="row d-flex mt-2" style="justify-content: end">
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Color="Color.Info" OnClick="Submit">Save</MudButton>
+            </div>
+
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public Action callback { get; set; } = null!;
+    [Parameter] public bool isEdit { get; set; }
+    [Parameter] public int? id { get; set; }
+    [Parameter] public CreateWarehouseCommand command { get; set; } = new CreateWarehouseCommand();
+    [Parameter] public List<GetAllWorkCentersDto> comboData { get; set; } = new();
+    
+    private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
+
+    private async Task Submit()
+    {
+        if (isEdit)
+        {
+            /* UpdateWorkCenterCommand workCenter = new UpdateWorkCenterCommand
+                     {
+                     Address = command.Address,
+                     City = command.City,
+                     Denomination = command.Denomination,
+                     Province = command.Province,
+                     Id = id!.Value,
+             };
+             await Mediator.Send(workCenter);*/
+        }
+        else
+        {
+            await Mediator.Send(command);
+        }
+
+        callback.Invoke();
+
+        command = new();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task<IEnumerable<GetAllWorkCentersDto>> SearchCombo(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return comboData;
+        return comboData.Where(x => x.Denomination.Contains(value, StringComparison.InvariantCultureIgnoreCase)).ToList();
+    }
+
+    private void Cancel()
+    {
+        command = new();
+
+        MudDialog.Cancel();
+    }
+}

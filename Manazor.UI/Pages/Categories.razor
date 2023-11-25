@@ -1,0 +1,79 @@
+﻿@page "/categories"
+@using Manazor.Application.Features.Categories.Queries;
+@using Manazor.UI.Data;
+@using Manazor.UI.Pages.Forms;
+@using MediatR;
+@inject IDialogService DialogService
+@inject IMediator Mediator
+
+<h3>Categories</h3> <MudButton Variant="Variant.Filled" Color="Color.Info" OnClick=" _=> OpenDialog(false, null)"></MudButton>
+
+
+<MudGrid Spacing="3" Justify="Justify.Center">
+    @foreach (var i in categories)
+    {
+        <MudItem @onclick="_=> OpenDialog(true, i)" lg="3">
+            <MudPaper Class="d-flex flex-column" Style="justify-content: space-around" Height="200px">
+                    <MudIcon Class="mx-auto" Icon="@GetIconValue(i.LogoId).ToString()" Style="@GetStyle(i.Color).ToString()"></MudIcon>
+                    <MudText Class="mx-auto">@i.Name</MudText>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+@code{
+    public List<GetAllCategoriesDto> categories = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateDataAsync();
+    }
+
+    private async Task UpdateDataAsync()
+    {
+        categories = await Mediator.Send(new GetAllCategories());
+        StateHasChanged();
+    }
+
+    private string GetIconValue(int id)
+    {
+        if (IconList.IconDictionary.ContainsKey(id))
+        {
+            return IconList.IconDictionary[id];
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private string GetStyle(string color)
+    {
+        return "font-size: 8rem; color: " + color;
+    }
+
+    private void OpenDialog()
+    {
+        DialogService.Show<CategoryForm>("Category");
+    }
+
+    private void OpenDialog(bool isEdit, GetAllCategoriesDto? dto)
+    {
+        var updateCallback = new Action(async () =>
+        {
+            await UpdateDataAsync();
+        });
+
+        DialogParameters parameters = new DialogParameters<CategoryForm>
+        {
+           { x => x.Callback, updateCallback },
+           { x => x.IsEdit, isEdit },
+           { x => x.SelectedIconId, dto != null ? dto.LogoId :  1 },
+           {x => x.CategoryName, dto != null ? dto.Name : ""},
+           {x => x.PickerColor, dto != null ? dto.Color : "#594AE2"},
+           {x => x.Id, dto != null ? dto.Id : null}
+        };
+
+        DialogService.Show<CategoryForm>("Category", parameters);
+    }
+}

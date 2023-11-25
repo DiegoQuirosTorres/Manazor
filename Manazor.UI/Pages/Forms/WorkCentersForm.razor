@@ -62,11 +62,14 @@
 
         callback.Invoke();
 
+        command = new();
+
         MudDialog.Close(DialogResult.Ok(true));
     }
 
     private void Cancel()
     {
+        command = new();
         MudDialog.Cancel();
     }
 }

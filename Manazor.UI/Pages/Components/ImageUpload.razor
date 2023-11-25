@@ -1,8 +1,5 @@
-﻿@page "/upload"
+﻿@inherits ComponentBase
 
-@inherits ComponentBase
-
-<MudCard Class="w-100 h-100 p-2">
     <div style="width: max-content; height: max-content; position: relative; background-color: rgb(244, 244, 244);">
         @if (imageData == null)
         {
@@ -33,7 +30,6 @@
         }
 
     </div>
-</MudCard>
 
 @code
 {
