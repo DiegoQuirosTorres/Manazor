@@ -1,6 +1,32 @@
 ﻿@page "/products"
+@using Manazor.Application.Features.Categories.Queries;
+@using Manazor.Application.Features.Products;
+@using Manazor.Application.Features.Products.Commands.Create;
+@using Manazor.UI.Pages.Forms;
+@using MediatR
+@inject IMediator Mediator
+@inject IDialogService DialogService
 <h3>Products</h3>
-
+<MudButton Variant="Variant.Filled" Color="Color.Info" OnClick=" _=> OpenDialog(false)"></MudButton>
 @code {
+    private async void OpenDialog(bool isEdit)
+    {
+        var updateCallback = new Action(async () =>
+        {
 
+        });
+
+        var categories = await Mediator.Send(new GetAllCategories());
+
+        DialogParameters parameters = new DialogParameters<ProductsForm>
+        {
+           { x => x.CallBack, updateCallback },
+           { x => x.IsEdit, isEdit },
+           {x => x.Id, null},
+           {x => x.Command, new CreateProductsCommand()},
+           {x => x.ComboData, categories}
+        };
+
+        DialogService.Show<ProductsForm>("Products", parameters);
+    }
 }

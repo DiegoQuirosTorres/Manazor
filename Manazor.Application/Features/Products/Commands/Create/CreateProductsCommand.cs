@@ -6,19 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Manazor.Application.Features.Products
+namespace Manazor.Application.Features.Products.Commands.Create
 {
     public class CreateProductsCommand : IRequest
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public string Description { get; set; }
+        public string Description { get; set; } = null!;
 
-        public byte[] Photo { get; set; }
+        public byte[]? Photo { get; set; }
 
         public int LowQuantity { get; set; }
 
-        public int Category { get; set; }
+        public int Category { get; set; } = 1;
 
         public decimal Price { get; set; }
     }

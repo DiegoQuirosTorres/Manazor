@@ -1,30 +1,44 @@
 ﻿@using Manazor.Application.Features.Categories.Queries;
+@using Manazor.Application.Features.Products.Commands.Create;
 @using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
 @using Manazor.Application.Features.Products;
 @using Manazor.Application.Features.Warehouses.Command.Create;
 @using Manazor.Application.Features.WorkCenters.Commands.Create;
 @using Manazor.Application.Features.WorkCenters.Commands.Update;
 @using Manazor.UI.Data;
+@using Manazor.UI.Pages.Components
 @using MediatR;
 @inject IMediator Mediator
-<MudDialog Style="width: 100rem;">
+<MudDialog Style="width: 50rem;">
     <DialogContent>
-        <MudForm Model="command">
+        <MudForm Model="Command">
 
-            <div class="row d-flex justify-content-between">
-                <MudTextField Label="Name" @bind-Value="command.Name" Required="true" />
-                <MudSpacer></MudSpacer>
-                <MudSelect T="int" Label="Categories "  MultiSelection="false" @bind-Value="command.Category">
-                    @foreach (var category in comboData)
-                    {
-                        <MudSelectItem T="int" Value=@category.Id>@category.Name <MudIcon Icon="@GetIconValue(category.LogoId)" Style="@GetStyle(category.Color)"></MudIcon></MudSelectItem>
-                    }
-                </MudSelect>
-            </div>
+            <div class="d-flex flex-row" style="justify-content: space-around;">
+                <div>
+                    <ImageUpload OnUpdatedPhoto="OnImageChangeCallBack"></ImageUpload>
+                </div>
+                <div class="h-100 d-flex flex-column" style="justify-content: space-around;">
+                    <div class="d-flex" style="justify-content: space-between;">
+                        <MudTextField Class="me-6" Label="Name" @bind-Value="Command.Name" Required="true" />
+                        <MudSpacer></MudSpacer>
+                        <MudSelect T="int" Label="Categories " MultiSelection="false" @bind-Value="Command.Category">
+                            @foreach (var category in ComboData)
+                            {
+                                <MudSelectItem T="int" Value=@category.Id>@category.Name <MudIcon Icon="@GetIconValue(category.LogoId)" Style="@GetStyle(category.Color)"></MudIcon></MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
 
-            <div class="row d-flex justify-content-between">
-                Aqui iria descripción
-            </div>
+                    <div class="row d-flex justify-content-between">
+                        <MudTextField Class="me-6" T="string" Label="Description" Variant="Variant.Text" Text="@Command.Description" Lines="5" />
+
+                        <div class="d-flex flex-column" style="justify-content: space-between;">
+                            <MudTextField T="decimal" Label="Price" Variant="Variant.Text" bind-Value="@Command.Price"></MudTextField>
+                            <MudTextField T="int" Label="Minimum Threshold" Variant="Variant.Text" bind-Value="@Command.LowQuantity"></MudTextField>
+                        </div>
+                    </div>
+                </div>
+          </div>
 
             <div class="row d-flex mt-2" style="justify-content: end">
                 <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -38,17 +52,17 @@
 @code
 {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
-    [Parameter] public Action callback { get; set; } = null!;
-    [Parameter] public bool isEdit { get; set; }
-    [Parameter] public int? id { get; set; }
-    [Parameter] public CreateProductsCommand command { get; set; } = new CreateProductsCommand();
-    [Parameter] public List<GetAllCategoriesDto> comboData { get; set; } = new();
+    [Parameter] public Action CallBack { get; set; } = null!;
+    [Parameter] public bool IsEdit { get; set; }
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public CreateProductsCommand Command { get; set; } = new CreateProductsCommand();
+    [Parameter] public List<GetAllCategoriesDto> ComboData { get; set; } = new();
 
     private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
 
     private async Task Submit()
     {
-        if (isEdit)
+        if (IsEdit)
         {
             /* UpdateWorkCenterCommand workCenter = new UpdateWorkCenterCommand
                      {
@@ -62,12 +76,12 @@
         }
         else
         {
-            await Mediator.Send(command);
+            await Mediator.Send(Command);
         }
 
-        callback.Invoke();
+        CallBack.Invoke();
 
-        command = new();
+        Command = new();
 
         MudDialog.Close(DialogResult.Ok(true));
     }
@@ -86,12 +100,17 @@
 
     private string GetStyle(string color)
     {
-        return "font-size: 10rem; color: " + color;
+        return "font-size: 1rem; color: " + color;
+    }
+
+    private void OnImageChangeCallBack(byte[] photo)
+    {
+        Command.Photo = photo;
     }
 
     private void Cancel()
     {
-        command = new();
+        Command = new();
 
         MudDialog.Cancel();
     }
