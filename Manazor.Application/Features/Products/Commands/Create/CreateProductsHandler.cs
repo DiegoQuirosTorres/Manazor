@@ -18,6 +18,7 @@ namespace Manazor.Application.Features.Products.Commands.Create
             Product product = new Product
             {
                 Name = request.Name,
+                Description = request.Description,
                 Category = request.Category,
                 LowQuantity = request.LowQuantity,
                 Photo = request.Photo,

@@ -1,17 +1,14 @@
-﻿using Manazor.Application.Common.Mappings;
-using Manazor.Domain.Entities.ProductModule;
-using Manazor.Domain.Entities.WarehouseModule;
-using MediatR;
+﻿using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Manazor.Application.Features.Products.Queries
+namespace Manazor.Application.Features.Products.Commands.Edit
 {
-    public class GetAllProductsDto : IMapFrom<Product>
-    { 
+    public class EditProductCommand : IRequest
+    {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
 
@@ -22,12 +19,6 @@ namespace Manazor.Application.Features.Products.Queries
         public int LowQuantity { get; set; }
 
         public int Category { get; set; } = 1;
-
-        public string CategoryName { get; set; } = null!;
-
-        public string Color { get; set; } = null!;
-
-        public int IconId { get; set; }
 
         public decimal Price { get; set; }
     }

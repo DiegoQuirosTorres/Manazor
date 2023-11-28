@@ -2,6 +2,7 @@
 @using Manazor.Application.Features.Products.Commands.Create;
 @using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
 @using Manazor.Application.Features.Products;
+@using Manazor.Application.Features.Products.Commands.Edit;
 @using Manazor.Application.Features.Warehouses.Command.Create;
 @using Manazor.Application.Features.WorkCenters.Commands.Create;
 @using Manazor.Application.Features.WorkCenters.Commands.Update;
@@ -30,11 +31,11 @@
                     </div>
 
                     <div class="row d-flex justify-content-between">
-                        <MudTextField Class="me-6" T="string" Label="Description" Variant="Variant.Text" Text="@Command.Description" Lines="5" />
+                        <MudTextField Class="me-6" T="string" Label="Description" Variant="Variant.Text" @bind-Value="Command.Description" Lines="5" />
 
                         <div class="d-flex flex-column" style="justify-content: space-between;">
-                            <MudTextField T="decimal" Label="Price" Variant="Variant.Text" bind-Value="@Command.Price"></MudTextField>
-                            <MudTextField T="int" Label="Minimum Threshold" Variant="Variant.Text" bind-Value="@Command.LowQuantity"></MudTextField>
+                            <MudTextField T="decimal" Label="Price" Variant="Variant.Text" @bind-Value="Command.Price"></MudTextField>
+                            <MudTextField T="int" Label="Minimum Threshold" Variant="Variant.Text" @bind-Value="Command.LowQuantity"></MudTextField>
                         </div>
                     </div>
                 </div>
@@ -64,15 +65,17 @@
     {
         if (IsEdit)
         {
-            /* UpdateWorkCenterCommand workCenter = new UpdateWorkCenterCommand
-                     {
-                     Address = command.Address,
-                     City = command.City,
-                     Denomination = command.Denomination,
-                     Province = command.Province,
-                     Id = id!.Value,
-             };
-             await Mediator.Send(workCenter);*/
+            EditProductCommand product = new EditProductCommand
+            {
+              Id = Id!.Value,
+              Category = Command.Category,
+              Description = Command.Description,
+              LowQuantity = Command.LowQuantity,
+              Name = Command.Name,
+              Photo = Command.Photo,
+              Price = Command.Price
+            };
+            await Mediator.Send(product);
         }
         else
         {
@@ -107,6 +110,7 @@
     {
         Command.Photo = photo;
     }
+
 
     private void Cancel()
     {

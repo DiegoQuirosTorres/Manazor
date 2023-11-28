@@ -31,7 +31,7 @@ namespace Manazor.Application.Features.Warehouses.Queries
         {
             var dtos = await _unitOfWork.Repository<Warehouse>().Entities
                    .Join(_unitOfWork.Repository<WorkCenter>().Entities,
-                            warehouse => warehouse.Id,
+                            warehouse => warehouse.workCenterId,
                             workCenter => workCenter.Id,
                      (warehouse, workCenter) => new GetAllWarehousesDto
                      {
