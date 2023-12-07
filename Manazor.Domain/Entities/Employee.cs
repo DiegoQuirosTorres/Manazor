@@ -11,5 +11,12 @@ namespace Manazor.Domain.Entities
 		public string Name { get; set; } = null!;
 
 		public string Surname { get; set; } = null!;
-	}
+
+		public byte[]? Photo { get; set; }
+
+        public string Email { get; set; } = string.Empty;
+
+		public string Password { get; set; } = string.Empty;
+
+    }
 }

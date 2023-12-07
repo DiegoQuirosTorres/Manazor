@@ -23,12 +23,26 @@ namespace Manazor.Persistence.Contexts
 		public DbSet<Warehouse> Warehouses => Set<Warehouse>();
 		public DbSet<Category> Categories => Set<Category>();
         public DbSet<Product> Products => Set<Product>();
+		public DbSet<ProductWarehouse> ProductsWarehouses => Set<ProductWarehouse>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 			modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-		}
+
+            modelBuilder.Entity<ProductWarehouse>()
+				.HasKey(pa => new { pa.WarehouseId, pa.ProductId });
+
+            modelBuilder.Entity<ProductWarehouse>()
+                .HasOne(pa => pa.Product)
+                .WithMany(a => a.ProductWarehouses)
+                .HasForeignKey(pa => pa.ProductId);
+
+            modelBuilder.Entity<ProductWarehouse>()
+                .HasOne(pa => pa.Warehouse)
+                .WithMany(p => p.ProductWarehouses)
+                .HasForeignKey(pa => pa.WarehouseId);
+        }
 
 		public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
 		{

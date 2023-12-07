@@ -20,6 +20,6 @@ namespace Manazor.Application.Features.Products.Commands.Edit
 
         public int Category { get; set; } = 1;
 
-        public decimal Price { get; set; }
+        public double Price { get; set; }
     }
 }

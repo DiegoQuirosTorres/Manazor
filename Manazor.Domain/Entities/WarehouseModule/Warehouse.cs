@@ -11,5 +11,7 @@ namespace Manazor.Domain.Entities.WarehouseModule
         public string Name { get; set; } = null!;
 
         public int workCenterId { get; set; }
+
+        public ICollection<ProductWarehouse> ProductWarehouses { get; set; }
     }
 }

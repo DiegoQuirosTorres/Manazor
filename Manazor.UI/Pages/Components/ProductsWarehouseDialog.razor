@@ -1,0 +1,58 @@
+﻿@using Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse;
+@using MediatR;
+@inject IMediator Mediator
+@inject IDialogService DialogService
+<MudDialog Style="width: 50rem;">
+    <DialogContent>
+
+    </DialogContent>
+</MudDialog>
+
+@code {
+    private List<GetProductsInWarehouseDto>? products;
+    private string _searchString;
+    [Parameter] public int Id { get; set; }
+
+    private Func<GetProductsInWarehouseDto, bool> _quickFilter => x =>
+      {
+          if (string.IsNullOrWhiteSpace(_searchString))
+              return true;
+
+          if (x.ProductName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+              return true;
+
+          return false;
+      };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateDataAsync();
+    }
+
+    private async Task UpdateDataAsync()
+    {
+        products = await Mediator.Send(new GetProductsInWarehouses
+        {
+                WarehouseId = Id
+        });
+
+        StateHasChanged();
+    }
+
+          /* private string GetIconValue(int iconId)
+          {
+          if (IconList.IconDictionary.ContainsKey(iconId))
+              {
+          return IconList.IconDictionary[iconId];
+              }
+              else
+          {
+      return "";
+      }
+      }
+
+      private string GetStyle(string color)
+          {
+          return "font-size: 1rem; color: " + color;
+      }*/
+}

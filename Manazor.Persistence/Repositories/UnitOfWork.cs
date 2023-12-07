@@ -14,6 +14,7 @@ namespace Manazor.Persistence.Repositories
 	{
 		private readonly ApplicationDbContext _dbContext;
 		private Hashtable _repositories;
+		private Hashtable _produtWarehouseRepository;
 		private bool disposed;
 
 		public UnitOfWork(ApplicationDbContext dbContext)
@@ -40,7 +41,26 @@ namespace Manazor.Persistence.Repositories
 			return (IGenericRepository<T>)_repositories[type];
 		}
 
-		public Task Rollback()
+        public IProductWarehouseRepository ProductWarehouseRepository()
+        {
+            if (_produtWarehouseRepository == null)
+                _produtWarehouseRepository = new Hashtable();
+
+            var type = typeof(ProductWarehouse).Name;
+
+            if (!_produtWarehouseRepository.ContainsKey(type))
+            {
+                var repositoryType = typeof(ProductWarehouseRepository);
+
+                var repositoryInstance = Activator.CreateInstance(repositoryType, _dbContext);
+
+                _produtWarehouseRepository.Add(type, repositoryInstance);
+            }
+
+            return (IProductWarehouseRepository)_produtWarehouseRepository[type];
+        }
+
+        public Task Rollback()
 		{
 			_dbContext.ChangeTracker.Entries().ToList().ForEach(x => x.Reload());
 			return Task.CompletedTask;

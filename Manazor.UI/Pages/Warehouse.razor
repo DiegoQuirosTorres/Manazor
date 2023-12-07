@@ -3,6 +3,7 @@
 @using Manazor.Application.Features.Warehouses.Command.Create;
 @using Manazor.Application.Features.Warehouses.Queries;
 @using Manazor.Application.Features.WorkCenters.Commands.Create;
+@using Manazor.UI.Pages.Components;
 @using Manazor.UI.Pages.Forms;
 @using MediatR
 @inject IMediator Mediator
@@ -19,7 +20,7 @@ else
     <MudText Class="mb-2" Typo="Typo.h6">Warehouses</MudText>
 
     <MudDataGrid T="GetAllWarehousesDto" MultiSelection="true" Items="@warehouses" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
-                 Hideable="true">
+                 Hideable="true" RowClick="@OpenOverview">
         <ToolBarContent>
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mw-100"></MudTextField>
@@ -64,6 +65,16 @@ else
     {
         warehouses = await Mediator.Send(new GetAllWarehouses());
         StateHasChanged();
+    }
+
+    private async Task OpenOverview(DataGridRowClickEventArgs<GetAllWarehousesDto> args)
+    {
+        DialogParameters parameters = new DialogParameters<ProductsWarehouseDialog>
+        {
+           { x => x.Id, args.Item.WorkCenterId},
+        };
+
+        DialogService.Show<WarehousesForm>(args.Item.Name, parameters);
     }
 
     private async Task OpenDialog(bool isEdit, GetAllWarehousesDto? dto)

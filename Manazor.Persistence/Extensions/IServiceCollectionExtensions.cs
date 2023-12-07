@@ -34,7 +34,9 @@ namespace Manazor.Persistence.Extensions
 		{
 			services
 				.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork))
-				.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-		}
+				.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>))
+				.AddTransient(typeof(IProductWarehouseRepository), typeof(ProductWarehouseRepository))
+                .AddTransient(typeof(IAuthService), typeof(AuthService));
+        }
 	}
 }

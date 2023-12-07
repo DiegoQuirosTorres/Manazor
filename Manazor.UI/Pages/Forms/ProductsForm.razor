@@ -34,7 +34,7 @@
                         <MudTextField Class="me-6" T="string" Label="Description" Variant="Variant.Text" @bind-Value="Command.Description" Lines="5" />
 
                         <div class="d-flex flex-column" style="justify-content: space-between;">
-                            <MudTextField T="decimal" Label="Price" Variant="Variant.Text" @bind-Value="Command.Price"></MudTextField>
+                            <MudTextField T="double" Label="Price" Variant="Variant.Text" @bind-Value="Command.Price"></MudTextField>
                             <MudTextField T="int" Label="Minimum Threshold" Variant="Variant.Text" @bind-Value="Command.LowQuantity"></MudTextField>
                         </div>
                     </div>

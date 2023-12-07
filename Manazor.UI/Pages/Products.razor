@@ -35,7 +35,11 @@ else
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
-            <PropertyColumn Property="x => x!.Price" />
+                <TemplateColumn Title="Price">
+                    <CellTemplate>
+                       <MudText>@context.Item.Price €</MudText>
+                </CellTemplate>
+                </TemplateColumn>
             <TemplateColumn Title="Category">
                 <CellTemplate>
                     <MudStack Row>
@@ -44,7 +48,7 @@ else
                     </MudStack>
                 </CellTemplate>
             </TemplateColumn>
-            <TemplateColumn>
+            <TemplateColumn Sortable="false" Filterable="false">
                 <CellTemplate>
                     <div class="d-flex justify-end w-100">
                         <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="() => OpenDialog(true, context.Item)" />

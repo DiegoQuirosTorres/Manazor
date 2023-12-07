@@ -1,10 +1,13 @@
 using BlazorSpinner;
 using Manazor.Application.Extensions;
+using Manazor.Domain.Entities;
+using Manazor.Persistence.Contexts;
 using Manazor.Persistence.Extensions;
 using Manazor.UI.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using Microsoft.AspNetCore.Identity;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);

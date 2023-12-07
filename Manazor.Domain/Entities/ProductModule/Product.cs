@@ -18,6 +18,8 @@ namespace Manazor.Domain.Entities.ProductModule
 
         public int Category { get; set; }
 
-        public decimal Price { get; set; }
+        public double Price { get; set; }
+
+        public ICollection<ProductWarehouse> ProductWarehouses { get; set; }
     }
 }
