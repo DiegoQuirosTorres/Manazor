@@ -17,7 +17,6 @@
                 </MudForm>
 
                 <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-4 mb-4" OnClick="OnClickLogin">Login</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-4 mb-4" OnClick="OnClickLogin">Login</MudButton>
         </MudContainer>
     </MudPaper>
 </MudContainer>
@@ -25,6 +24,7 @@
 @code {
     private string username;
     private string password;
+    [Parameter] public Action CallBack { get; set; } = null!;
     MudForm form;
 
     private string ValidateUsername(string value)
@@ -45,25 +45,16 @@
     {
         await form.Validate();
 
-        var pepe = await Mediator.Send(new LoginCommand
+        var user = await Mediator.Send(new LoginCommand
             {
                 Email = username,
                 Password = password
             });
 
-        Console.WriteLine(pepe);
+        if(user != null)
+        {
+            CallBack.Invoke();
+        }
     }
 
-    private async Task OnClickRegister()
-    {
-        await form.Validate();
-
-        var pepe = await Mediator.Send(new LoginCommand
-            {
-                Email = username,
-                Password = password
-            });
-
-        Console.WriteLine(pepe);
-    }
 }

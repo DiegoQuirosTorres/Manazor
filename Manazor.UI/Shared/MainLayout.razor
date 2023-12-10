@@ -9,7 +9,7 @@
 <MudLayout>
     @if (!loggedIn)
     {
-        <Login></Login>
+        <Login CallBack="login"></Login>
     }
     else
     {
@@ -39,10 +39,16 @@
 @code {
     bool _drawerOpen = true;
     bool loggedIn = false;
+    Action login;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    void OnLog()
+    {
+        loggedIn = true;
     }
 
     private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
@@ -76,6 +82,16 @@
                     Info = "#4496d4"
                 }
             };
+
+        var updateCallback = new Action( () =>
+        {
+            loggedIn = true;
+
+            StateHasChanged();
+        });
+
+        login = updateCallback;
+
         StateHasChanged();
     }
 
