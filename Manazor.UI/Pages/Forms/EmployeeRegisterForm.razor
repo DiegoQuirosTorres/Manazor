@@ -1,0 +1,114 @@
+﻿@using Manazor.Application.Features.Categories.Queries;
+@using Manazor.Application.Features.Employees.Command.RegisterEmployee;
+@using Manazor.Application.Features.Products.Commands.Create;
+@using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
+@using Manazor.Application.Features.Products;
+@using Manazor.Application.Features.Products.Commands.Edit;
+@using Manazor.Application.Features.Warehouses.Command.Create;
+@using Manazor.Application.Features.WorkCenters.Commands.Create;
+@using Manazor.Application.Features.WorkCenters.Commands.Update;
+@using Manazor.UI.Data;
+@using Manazor.UI.Pages.Components
+@using MediatR;
+@inject IMediator Mediator
+<MudDialog Style="width: 60rem;">
+    <DialogContent>
+        <MudForm Model="Command">
+
+            <div class="d-flex flex-row" style="justify-content: space-around;">
+                <div>
+                    <ImageUpload OnUpdatedPhoto="OnImageChangeCallBack"></ImageUpload>
+                </div>
+                <div class="h-100 d-flex flex-column" style="justify-content: space-around;">
+                    <div class="d-flex" style="justify-content: space-between;">
+                        <MudTextField Class="me-6" Label="Name" @bind-Value="Command.Name" Required="true" />
+                        <MudTextField Class="me-6" Label="Surname" @bind-Value="Command.Surname" Required="true" />
+                        <MudSpacer></MudSpacer>
+                        <MudSelect T="int" Label="Workcenter " MultiSelection="false" @bind-Value="Command.WorkCenterId">
+                            @foreach (var category in ComboData)
+                            {
+                                <MudSelectItem T="int" Value=@category.Id>@category.Name <MudIcon Icon="@GetIconValue(category.LogoId)" Style="@GetStyle(category.Color)"></MudIcon></MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+
+                    <div class="row d-flex justify-content-between">
+                        <MudDatePicker Class="me-6" Label="BirthDate" @bind-Value="Command.BirthDate" />
+                            <MudTextField Class="me-6" T="string" Label="Password" Variant="Variant.Text"></MudTextField>
+                            <MudTextField T="string" Label="Province" Variant="Variant.Text" @bind-Value="Command.Province"></MudTextField>
+                    </div>
+                    <div class="row d-flex justify-content-between">
+                        <MudTextField Class="me-6" T="string" Label="Town" Variant="Variant.Text"></MudTextField>
+                        <MudTextField T="string" Label="Address" Variant="Variant.Text" @bind-Value="Command.Province"></MudTextField>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row d-flex mt-2" style="justify-content: end">
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Color="Color.Info" OnClick="Submit">Save</MudButton>
+            </div>
+
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public Action CallBack { get; set; } = null!;
+    [Parameter] public bool IsEdit { get; set; }
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public RegisterEmployeeCommand Command { get; set; } = new RegisterEmployeeCommand();
+    [Parameter] public List<GetAllCategoriesDto?> ComboData { get; set; } = new();
+
+    private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
+
+    private async Task Submit()
+    {
+        if (IsEdit)
+        {
+           
+        }
+        else
+        {
+            await Mediator.Send(Command);
+        }
+
+        CallBack.Invoke();
+
+        Command = new();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private string GetIconValue(int iconId)
+    {
+        if (IconList.IconDictionary.ContainsKey(iconId))
+        {
+            return IconList.IconDictionary[iconId];
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private string GetStyle(string color)
+    {
+        return "font-size: 1rem; color: " + color;
+    }
+
+    private void OnImageChangeCallBack(byte[] photo)
+    {
+        Command.Photo = photo;
+    }
+
+
+    private void Cancel()
+    {
+        Command = new();
+
+        MudDialog.Cancel();
+    }
+}

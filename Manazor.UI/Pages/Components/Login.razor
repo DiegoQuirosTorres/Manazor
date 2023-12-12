@@ -3,6 +3,7 @@
 @using MediatR;
 @inherits LayoutComponentBase
 @inject IMediator Mediator
+@inject IJSRuntime CookieService
 <MudContainer Class="d-flex" Style="height: 100vh; width: 100vw; justify-content: center;">
     <MudPaper Width="20rem" Elevation="3" Style="margin: auto;">
         <MudContainer Class="d-flex flex-column" Style="align-items: center">      
@@ -12,8 +13,8 @@
                 </div>
 
                 <MudForm @ref="form" >
-                    <MudTextField Label="Username" @bind-Value="username" Required="true" Validation="@(new[] { new Func<string, string>(ValidateUsername) })" />
-                    <MudTextField Label="Password" Type="MudTextFieldType.Password" @bind-Value="password" Required="true" Validation="@(new[] { new Func<string, string>(ValidatePassword) })" />
+                    <MudTextField Label="Username" @bind-Value="_username" Required="true" Validation="@(new[] { new Func<string, string>(ValidateUsername) })" />
+                <MudTextField Label="Password" Type="MudTextFieldType.Password" @bind-Value="_password" Required="true" Validation="@(new[] { new Func<string, string>(ValidatePassword) })" InputType="@_passwordInput" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="PasswordButton" AdornmentAriaLabel="Show Password" />
                 </MudForm>
 
                 <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-4 mb-4" OnClick="OnClickLogin">Login</MudButton>
@@ -22,10 +23,15 @@
 </MudContainer>
 
 @code {
-    private string username;
-    private string password;
     [Parameter] public Action CallBack { get; set; } = null!;
-    MudForm form;
+    private string _username = "";
+    private string _password = "";
+    private InputType _passwordInput = InputType.Password;
+    private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+    private bool _isShow = false;
+    MudForm form = new MudForm();
+
+
 
     private string ValidateUsername(string value)
     {
@@ -41,20 +47,45 @@
         return null;
     }
 
+    void PasswordButton()
+    {
+        @if (_isShow)
+        {
+            _isShow = false;
+            _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
+            _passwordInput = InputType.Password;
+        }
+        else
+        {
+            _isShow = true;
+            _passwordInputIcon = Icons.Material.Filled.Visibility;
+            _passwordInput = InputType.Text;
+        }
+    }
+
     private async Task OnClickLogin()
     {
         await form.Validate();
 
         var user = await Mediator.Send(new LoginCommand
             {
-                Email = username,
-                Password = password
+                Email = _username,
+                Password = _password
             });
 
         if(user != null)
         {
+            StoreCookie();
             CallBack.Invoke();
         }
+    }
+
+    private void StoreCookie()
+    {
+        // Provisional cookie data
+        var userData = "LOGGED";
+
+        CookieService.InvokeVoidAsync("login.cookie", $"userData={userData};expires={DateTime.Now.AddHours(6):R}");
     }
 
 }

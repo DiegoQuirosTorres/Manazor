@@ -25,6 +25,7 @@ builder.Services.AddMudServices();
 builder.Services.AddApplicationLayer();
 builder.Services.AddPersistenceLayer(builder.Configuration);
 builder.Services.AddScoped<SpinnerService>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
