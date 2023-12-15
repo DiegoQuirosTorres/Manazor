@@ -3,13 +3,18 @@
 @inherits LayoutComponentBase
 @inject IJSRuntime CookieService
 @inject IHttpContextAccessor _httpContext
+@inject Blazored.SessionStorage.ISessionStorageService sessionStorage
 
 <MudThemeProvider Theme="_themeManager.Theme" />
 <MudDialogProvider MaxWidth="MaxWidth.Large" />
 <MudSnackbarProvider />
 
 <MudLayout>
-    @if (!loggedIn)
+    @if (_loadingCookies)
+    {
+
+    }
+    else if (!loggedIn)
     {
         <Login CallBack="login"></Login>
     }
@@ -41,6 +46,8 @@
 @code {
     bool _drawerOpen = true;
     bool loggedIn = false;
+    private bool _firstRender = true;
+    private bool _loadingCookies = true;
     Action login;
 
     void DrawerToggle()
@@ -70,26 +77,31 @@
 
     private async Task GetCookieData()
     {
-        // I would like to move this to a Middleware or a service if i have time
-        var userData = await GetCookieValue("userData");
+        var userData = await sessionStorage.GetItemAsync<string>("user");
 
-        if (!string.IsNullOrEmpty(userData))
+        if(userData != null)
         {
-            var datos = userData.Split('|');
-            if (datos.Length == 4)
-            {
-                /*email = datos[0];
-                name = datos[1];
-                surname = datos[2];
-                photo = datos[3];*/
-                loggedIn = true;
-                StateHasChanged();
-            }
+            loggedIn = true;
+            _firstRender = false;
+        }
+
+        if (_loadingCookies)
+        {
+            _loadingCookies = false;
+            StateHasChanged();
+        }
+
+        if (_firstRender)
+        {
+            StateHasChanged();
+
+            _firstRender = false;
         }
     }
+    // I know this is not the best way to no display the login, but blazor server dont allow you to make async opperations on the initialize and if you dont make the loading cookies step, the login page will bne displayed for a second if you refresh even if you are logged in
 
 
-    private async Task<string> GetCookieValue(string valueName)
+    /*private async Task<string> GetCookieValue(string valueName)
     {
         var arguments = new object[] { valueName };
 
@@ -120,7 +132,7 @@
         {
             return null;
         }
-    }
+    }*/
 
     protected override void OnInitialized()
     {

@@ -1,3 +1,4 @@
+using Blazored.SessionStorage;
 using BlazorSpinner;
 using Manazor.Application.Extensions;
 using Manazor.Domain.Entities;
@@ -26,6 +27,7 @@ builder.Services.AddApplicationLayer();
 builder.Services.AddPersistenceLayer(builder.Configuration);
 builder.Services.AddScoped<SpinnerService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddBlazoredSessionStorage();
 
 var app = builder.Build();
 

@@ -2,13 +2,6 @@
 using Manazor.Domain.Entities;
 using Manazor.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using BCrypt.Net;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Manazor.Persistence.Repositories
 {
     public class AuthService : IAuthService
@@ -25,8 +18,6 @@ namespace Manazor.Persistence.Repositories
             Employee? employee =  await _dbContext.Employees
                                             .Where(e => e.Email == username)
                                             .FirstOrDefaultAsync();
-
-           var a = BCrypt.Net.BCrypt.HashPassword(password);
 
             return employee == null ? null
                                     : BCrypt.Net.BCrypt.Verify(password, employee.Password)
