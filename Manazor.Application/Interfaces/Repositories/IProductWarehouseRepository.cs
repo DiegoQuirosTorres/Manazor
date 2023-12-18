@@ -12,7 +12,7 @@ namespace Manazor.Application.Interfaces.Repositories
         IQueryable<ProductWarehouse> Entities { get; }
 
         Task<ProductWarehouse> GetByIdAsync(int productId, int warehouseId);
-        Task<List<ProductWarehouse>> GetAllAsync();
+        Task<List<ProductWarehouse>> GetAllAsync(int warehouseId);
         Task<ProductWarehouse> AddAsync(ProductWarehouse entity);
         Task UpdateAsync(ProductWarehouse entity);
         Task DeleteAsync(ProductWarehouse entity);

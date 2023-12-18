@@ -25,6 +25,6 @@ namespace Manazor.Application.Features.Employees.Command.RegisterEmployee
         public string Address { get; set; } = null!;
         public string City { get; set; } = null!;
 
-        public int WorkCenterId { get; set; }
+        public int WorkCenterId { get; set; } = 1;
     }
 }

@@ -1,10 +1,47 @@
 ﻿@using Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse;
+@using Manazor.UI.Data;
 @using MediatR;
 @inject IMediator Mediator
 @inject IDialogService DialogService
 <MudDialog Style="width: 50rem;">
     <DialogContent>
-
+        <MudDataGrid T="GetProductsInWarehouseDto" Items="@products" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+                     Hideable="true">
+            <ToolBarContent>
+                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mw-100"></MudTextField>
+                <MudSpacer />
+                <MudButton  Class="me-2" Variant="Variant.Filled" Color="Color.Info">Add <MudIcon Icon="@Icons.Material.Filled.Add"></MudIcon></MudButton>
+            </ToolBarContent>
+            <Columns>
+                <TemplateColumn Title="Name">
+                    <CellTemplate>
+                        <MudStack Row>
+                            <MudAvatar Size="Size.Medium">
+                                <MudImage Size="Size.Medium" Src="@($"data:image/png;base64,{Convert.ToBase64String(context.Item!.ProductPhoto!)}")" Alt="Product image"></MudImage>
+                            </MudAvatar>
+                            <MudText>@context.Item.ProductName</MudText>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Category">
+                    <CellTemplate>
+                        <MudStack Row>
+                            <MudIcon Icon="@GetIconValue(context.Item.LogoId)" Style="@GetStyle(context.Item.CategoryColor)"></MudIcon>
+                            <MudText>@context.Item.CategoryName</MudText>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+                <TemplateColumn Title="Quantity">
+                    <CellTemplate>
+                        <MudText>@context.Item.Quantity €</MudText>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="GetProductsInWarehouseDto" />
+            </PagerContent>
+        </MudDataGrid>
     </DialogContent>
 </MudDialog>
 
@@ -39,20 +76,22 @@
         StateHasChanged();
     }
 
-          /* private string GetIconValue(int iconId)
-          {
-          if (IconList.IconDictionary.ContainsKey(iconId))
-              {
-          return IconList.IconDictionary[iconId];
-              }
-              else
-          {
-      return "";
-      }
-      }
 
-      private string GetStyle(string color)
-          {
-          return "font-size: 1rem; color: " + color;
-      }*/
+    private string GetIconValue(int iconId)
+    {
+        if (IconList.IconDictionary.ContainsKey(iconId))
+        {
+            return IconList.IconDictionary[iconId];
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+
+    private string GetStyle(string color)
+    {
+        return "font-size: 1rem; color: " + color;
+    }
 }

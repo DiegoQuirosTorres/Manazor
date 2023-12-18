@@ -79,14 +79,14 @@ else
         });
 
         //var categories = await Mediator.Send(new GetAllCategories());
-
+        var combo = await Mediator.Send(new GetAllWorkCenters());
         DialogParameters parameters = new DialogParameters<EmployeeRegisterForm>
         {
            { x => x.CallBack, updateCallback },
            { x => x.IsEdit, isEdit },
            {x => x.Id, null},
            {x => x.Command, new RegisterEmployeeCommand() },
-           {x => x.ComboData, new List<GetAllCategoriesDto?>()}
+           {x => x.ComboData,combo}
         };
 
         DialogService.Show<EmployeeRegisterForm>("Employee", parameters);

@@ -34,10 +34,11 @@ namespace Manazor.Persistence.Repositories
             return Task.CompletedTask;
         }
 
-        public async Task<List<ProductWarehouse>> GetAllAsync()
+        public async Task<List<ProductWarehouse>> GetAllAsync(int warehouseId)
         {
             return await _dbContext
                 .Set<ProductWarehouse>()
+                .Where(p => p.WarehouseId == warehouseId)
                 .ToListAsync();
         }
 

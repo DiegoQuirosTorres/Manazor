@@ -25,16 +25,16 @@
                         <MudTextField Class="me-6" Label="Surname" @bind-Value="Command.Surname" Required="true" />
                         <MudSpacer></MudSpacer>
                         <MudSelect T="int" Label="Workcenter " MultiSelection="false" @bind-Value="Command.WorkCenterId">
-                            @foreach (var category in ComboData)
+                            @foreach (var workCenter in ComboData)
                             {
-                                <MudSelectItem T="int" Value=@category.Id>@category.Name <MudIcon Icon="@GetIconValue(category.LogoId)" Style="@GetStyle(category.Color)"></MudIcon></MudSelectItem>
+                                <MudSelectItem T="int" Value=@workCenter.Id>@workCenter.Denomination</MudSelectItem>
                             }
                         </MudSelect>
                     </div>
 
                     <div class="row d-flex justify-content-between">
                         <MudDatePicker Class="me-6" Label="BirthDate" @bind-Value="Command.BirthDate" />
-                            <MudTextField Class="me-6" T="string" Label="Password" Variant="Variant.Text"></MudTextField>
+                            <MudTextField Class="me-6" T="string" @bind-Value="Command.Password" Label="Password" Variant="Variant.Text"></MudTextField>
                             <MudTextField T="string" Label="Province" Variant="Variant.Text" @bind-Value="Command.Province"></MudTextField>
                     </div>
                     <div class="row d-flex justify-content-between">
@@ -60,7 +60,7 @@
     [Parameter] public bool IsEdit { get; set; }
     [Parameter] public int? Id { get; set; }
     [Parameter] public RegisterEmployeeCommand Command { get; set; } = new RegisterEmployeeCommand();
-    [Parameter] public List<GetAllCategoriesDto?> ComboData { get; set; } = new();
+    [Parameter] public List<GetAllWorkCentersDto?> ComboData { get; set; } = new();
 
     private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
 

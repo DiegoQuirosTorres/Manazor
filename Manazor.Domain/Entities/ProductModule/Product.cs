@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Manazor.Domain.Entities.WarehouseModule;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,8 @@ namespace Manazor.Domain.Entities.ProductModule
         public int Category { get; set; }
 
         public double Price { get; set; }
+
+        public List<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
 
         public ICollection<ProductWarehouse> ProductWarehouses { get; set; }
     }

@@ -16,32 +16,43 @@ namespace Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse
 {
     internal class GetProductsInWarehouseHandler : IRequestHandler<GetProductsInWarehouses, List<GetProductsInWarehouseDto>>
     {
+        private readonly IProductWarehouseRepository _productWarehouseRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GetProductsInWarehouseHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetProductsInWarehouseHandler(IProductWarehouseRepository productWarehouseRepository, IUnitOfWork unitOfWork, IMapper mapper)
         {
+            _productWarehouseRepository = productWarehouseRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
         public async Task<List<GetProductsInWarehouseDto>> Handle(GetProductsInWarehouses request, CancellationToken cancellationToken)
         {
-            var dtos = await _unitOfWork.ProductWarehouseRepository().Entities
-                   .Join(_unitOfWork.Repository<Product>().Entities,
-                            warehouseProduct => warehouseProduct.ProductId,
-                            product => product.Id,
-                     (warehouseProduct, product) => new GetProductsInWarehouseDto
-                     {
-                         ProductId = warehouseProduct.ProductId,
-                         WarehouseId = warehouseProduct.WarehouseId,
-                         ProductName = product.Name,
-                         ProductPhoto = product.Photo,
-                         Quantity = warehouseProduct.Quantity,
-                     })
-                    .ToListAsync(cancellationToken);
+            var dtos = await _productWarehouseRepository.GetAllAsync(request.WarehouseId);
 
-            return dtos;
+            List<GetProductsInWarehouseDto> result = new List<GetProductsInWarehouseDto>();
+
+            dtos.ForEach(async p => {
+                //for some reason Include with EF dont give me the entities of Product and Warehouse joined on ProductWarehouse, so i have to request them manually
+                var product = await _unitOfWork.Repository<Product>().GetByIdAsync(p.ProductId);
+
+                var category = await _unitOfWork.Repository<Category>().GetByIdAsync(product.Category);
+
+                result.Add(new GetProductsInWarehouseDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = product.Name,
+                    ProductPhoto = product.Photo,
+                    Quantity = p.Quantity,
+                    WarehouseId = p.WarehouseId,
+                    CategoryColor = category.Color,
+                    CategoryName = category.Name,
+                    LogoId = category.LogoId,
+                });
+            });
+
+            return result;
         }
     }
 }

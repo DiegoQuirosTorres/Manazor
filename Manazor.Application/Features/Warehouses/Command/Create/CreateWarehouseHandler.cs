@@ -25,7 +25,7 @@ namespace Manazor.Application.Features.Warehouses.Command.Create
             Warehouse warehouse = new Warehouse
             {
                 Name = request.Name,
-                workCenterId = request.WorkCenterDto.Id,
+                WorkCenterId = request.WorkCenterDto.Id,
             };
 
             await _unitOfWork.Repository<Warehouse>().AddAsync(warehouse);

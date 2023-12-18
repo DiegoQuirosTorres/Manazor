@@ -19,5 +19,11 @@ namespace Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse
         public string ProductName { get; set; } = null!;
 
         public int Quantity { get; set; }
+
+        public int LogoId { get; set; }
+
+        public string CategoryColor { get; set; }
+
+        public string CategoryName { get; set; }
     }
 }

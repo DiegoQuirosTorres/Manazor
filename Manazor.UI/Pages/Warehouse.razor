@@ -74,7 +74,7 @@ else
            { x => x.Id, args.Item.WorkCenterId},
         };
 
-        DialogService.Show<WarehousesForm>(args.Item.Name, parameters);
+        DialogService.Show<ProductsWarehouseDialog>(args.Item.Name, parameters);
     }
 
     private async Task OpenDialog(bool isEdit, GetAllWarehousesDto? dto)

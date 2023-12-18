@@ -16,7 +16,7 @@ namespace Manazor.Persistence.Contexts
 	{
 		public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
 		: base(options)
-		{ }
+        { ChangeTracker.LazyLoadingEnabled = true; }
 
 		public DbSet<Employee> Employees => Set<Employee>();
         public DbSet<WorkCenter> WorkCenters => Set<WorkCenter>();
@@ -33,15 +33,12 @@ namespace Manazor.Persistence.Contexts
             modelBuilder.Entity<ProductWarehouse>()
 				.HasKey(pa => new { pa.WarehouseId, pa.ProductId });
 
-            modelBuilder.Entity<ProductWarehouse>()
-                .HasOne(pa => pa.Product)
-                .WithMany(a => a.ProductWarehouses)
-                .HasForeignKey(pa => pa.ProductId);
-
-            modelBuilder.Entity<ProductWarehouse>()
-                .HasOne(pa => pa.Warehouse)
-                .WithMany(p => p.ProductWarehouses)
-                .HasForeignKey(pa => pa.WarehouseId);
+            modelBuilder.Entity<Warehouse>()
+                   .HasMany(e => e.Products)
+                   .WithMany(e => e.Warehouses)
+                   .UsingEntity<ProductWarehouse>(
+                       l => l.HasOne<Product>(e => e.Product).WithMany(e => e.ProductWarehouses),
+                       r => r.HasOne<Warehouse>(e => e.Warehouse).WithMany(e => e.ProductWarehouses));
         }
 
 		public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
