@@ -29,9 +29,11 @@ namespace Manazor.Application.Features.Auth.Login
             {
                 return new EmployeeInfoDto
                 {
+                    Id = loginData.Id,
                     Email = loginData.Email,
                     Name = loginData.Name,
-                    Photo = loginData.Photo
+                    Photo = loginData.Photo,
+                    RoleId = loginData.RoleId!.Value,
                 };
             }
             else

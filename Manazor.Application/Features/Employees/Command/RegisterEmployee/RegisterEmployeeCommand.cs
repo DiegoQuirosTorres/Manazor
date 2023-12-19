@@ -22,9 +22,13 @@ namespace Manazor.Application.Features.Employees.Command.RegisterEmployee
         public byte[] Photo { get; set; }
 
         public string Province { get; set; } = null!;
+
         public string Address { get; set; } = null!;
+
         public string City { get; set; } = null!;
 
         public int WorkCenterId { get; set; } = 1;
+
+        public int RoleId { get; set; }
     }
 }

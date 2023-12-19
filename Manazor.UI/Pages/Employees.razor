@@ -2,6 +2,7 @@
 @using Manazor.Application.Features.Categories.Queries;
 @using Manazor.Application.Features.Employees.Command.RegisterEmployee;
 @using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
+@using Manazor.Application.Features.Roles.Queries;
 @using Manazor.UI.Pages.Forms;
 @using MediatR
 @inject IMediator Mediator
@@ -76,7 +77,7 @@ else
             <TemplateColumn Title="Workcenter">
                 <CellTemplate>
                     <div>
-                        @context.Item.WorkCenterName;
+                        @context.Item.WorkCenterName
                     </div>
                 </CellTemplate>
             </TemplateColumn>
@@ -132,13 +133,17 @@ else
 
         //var categories = await Mediator.Send(new GetAllCategories());
         var combo = await Mediator.Send(new GetAllWorkCenters());
+
+        var roles = await Mediator.Send(new GetAllRoles());
+
         DialogParameters parameters = new DialogParameters<EmployeeRegisterForm>
         {
            { x => x.CallBack, updateCallback },
            { x => x.IsEdit, isEdit },
            {x => x.Id, null},
            {x => x.Command, new RegisterEmployeeCommand() },
-           {x => x.ComboData,combo}
+           {x => x.ComboData,combo},
+           {x => x.RoleComboData, roles}
         };
 
         DialogService.Show<EmployeeRegisterForm>("Employee", parameters);

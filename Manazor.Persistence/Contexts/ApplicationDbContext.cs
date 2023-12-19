@@ -24,6 +24,7 @@ namespace Manazor.Persistence.Contexts
 		public DbSet<Category> Categories => Set<Category>();
         public DbSet<Product> Products => Set<Product>();
 		public DbSet<ProductWarehouse> ProductsWarehouses => Set<ProductWarehouse>();
+        public DbSet<Role> Roles => Set<Role>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{

@@ -83,10 +83,11 @@
 
     private async Task StoreCookie(EmployeeInfoDto employee)
     {
-        // Provisional cookie data
+        await sessionStorage.SetItemAsync("id", employee.Id);
+
         await sessionStorage.SetItemAsync("user", employee.Email);
-        await sessionStorage.SetItemAsync("photo", employee.Photo);
-        //CookieService.InvokeVoidAsync("login.cookie", $"userData={userData};expires={DateTime.Now.AddHours(6):R}");
+
+        await sessionStorage.SetItemAsync("role", employee.RoleId);
     }
 
 }

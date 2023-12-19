@@ -38,7 +38,11 @@ namespace Manazor.Application.Features.Employees.Queries.GetAllEmployees
 				{
 					var workCenter = await _unitOfWork.Repository<WorkCenter>().GetByIdAsync(e.WorkCenterId.Value);
 
+					var role = await _unitOfWork.Repository<Role>().GetByIdAsync(e.RoleId);
+
 					e.WorkCenterName = workCenter.Denomination;
+
+					e.RoleName = role.Name;
                 }
             }
 

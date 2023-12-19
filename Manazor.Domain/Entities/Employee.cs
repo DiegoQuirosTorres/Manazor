@@ -28,5 +28,7 @@ namespace Manazor.Domain.Entities
 
 		public DateTime? BirthDate { get; set; }
 
+		public int? RoleId { get; set; }
+
     }
 }

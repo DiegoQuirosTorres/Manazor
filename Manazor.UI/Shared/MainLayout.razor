@@ -1,9 +1,12 @@
-﻿@using Manazor.UI.Pages.Components
+﻿@using Manazor.Application.Features.Employees.Queries.GetEmployeePhoto;
+@using Manazor.UI.Pages.Components
 @using MudBlazor.ThemeManager
 @inherits LayoutComponentBase
 @inject IJSRuntime CookieService
 @inject IHttpContextAccessor _httpContext
 @inject Blazored.SessionStorage.ISessionStorageService sessionStorage
+@using MediatR
+@inject IMediator Mediator
 
 <MudThemeProvider Theme="_themeManager.Theme" />
 <MudDialogProvider MaxWidth="MaxWidth.Large" />
@@ -46,7 +49,7 @@
                 <MudImage Src="assets/logo/LogoV2.png" Width="60" Height="60" />
                 <MudText Style="margin-left: -0.35rem" Typo="Typo.h6" Class="font-weight-bold align-self-end mb-2">anazor</MudText>
             </MudDrawerHeader>
-            <NavMenu />
+            <NavMenu RoleId="@roleId" />
         </MudDrawer>
         <MudMainContent>
             <MudContainer MaxWidth="MaxWidth.Large" Class="my-16 pt-16">
@@ -58,8 +61,9 @@
 
 @code {
     bool _drawerOpen = true;
-    byte[] photo;
+    byte[]? photo;
     string email;
+    int? roleId;
     bool loggedIn = false;
     private bool _firstRender = true;
     private bool _loadingCookies = true;
@@ -94,11 +98,19 @@
     {
         email = await sessionStorage.GetItemAsync<string>("user");
 
-        photo = await sessionStorage.GetItemAsync<byte[]>("photo");
+        int id = await sessionStorage.GetItemAsync<int>("id");
+
+        roleId = await sessionStorage.GetItemAsync<int>("role");
 
         if (email != null)
         {
+            photo = await Mediator.Send(new GetEmployeePhotoRequest
+            {
+                EmployeeId = id
+            });
+
             loggedIn = true;
+
             _firstRender = false;
         }
 
@@ -168,9 +180,11 @@
                 }
             };
 
-        var updateCallback = new Action( () =>
+        var updateCallback = new Action(() =>
         {
             loggedIn = true;
+
+            _loadingCookies = true;
 
             StateHasChanged();
         });

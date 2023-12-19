@@ -11,11 +11,15 @@ namespace Manazor.Application.Features.Auth.Login
 {
     public class EmployeeInfoDto : IMapFrom<Employee>
     {
+        public int Id { get; set; }
+
         public string Name { get; set; } = null!;
 
         public string Email { get; set; } = null!;
 
         public byte[]? Photo { get; set; }
+
+        public int RoleId { get; set; }
 
         //public List<int> RolesIds { get; set; }
     }
