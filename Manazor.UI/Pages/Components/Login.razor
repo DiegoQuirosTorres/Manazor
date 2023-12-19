@@ -76,15 +76,16 @@
 
         if(user != null)
         {
-            await StoreCookie();
+            await StoreCookie(user);
             CallBack.Invoke();
         }
     }
 
-    private async Task StoreCookie()
+    private async Task StoreCookie(EmployeeInfoDto employee)
     {
         // Provisional cookie data
-        await sessionStorage.SetItemAsync("user", "LOGGEDh");
+        await sessionStorage.SetItemAsync("user", employee.Email);
+        await sessionStorage.SetItemAsync("photo", employee.Photo);
         //CookieService.InvokeVoidAsync("login.cookie", $"userData={userData};expires={DateTime.Now.AddHours(6):R}");
     }
 

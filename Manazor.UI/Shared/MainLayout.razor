@@ -26,7 +26,20 @@
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
             <MudSpacer />
             <MudIconButton Icon="@Icons.Custom.Brands.LinkedIn" Color="Color.Inherit" Link="https://www.linkedin.com/in/diegoquirostorres" Target="_blank" />
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/DiegoQuirosTorres/Manazor" Target="_blank" />
+            <MudIconButton Class="me-5" Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/DiegoQuirosTorres/Manazor" Target="_blank" />
+            <MudAvatar Size="Size.Medium">
+                @if (photo == null)
+                {
+                    <MudImage Size="Size.Medium" Src="assets/placeholder/placeholder.jpg" Alt="Product image"></MudImage>
+                }
+                else
+                {
+                    <MudImage Size="Size.Medium" Src="@($"data:image/png;base64,{Convert.ToBase64String(photo)}")" Alt="Product image"></MudImage>
+                }
+            </MudAvatar>
+            <MudText>
+                @email
+            </MudText>
         </MudAppBar>
         <MudDrawer @bind-Open="_drawerOpen" ClipMode="_themeManager.DrawerClipMode" Elevation="_themeManager.DrawerElevation">
             <MudDrawerHeader Class="d-flex align-items-center">
@@ -45,6 +58,8 @@
 
 @code {
     bool _drawerOpen = true;
+    byte[] photo;
+    string email;
     bool loggedIn = false;
     private bool _firstRender = true;
     private bool _loadingCookies = true;
@@ -77,9 +92,11 @@
 
     private async Task GetCookieData()
     {
-        var userData = await sessionStorage.GetItemAsync<string>("user");
+        email = await sessionStorage.GetItemAsync<string>("user");
 
-        if(userData != null)
+        photo = await sessionStorage.GetItemAsync<byte[]>("photo");
+
+        if (email != null)
         {
             loggedIn = true;
             _firstRender = false;

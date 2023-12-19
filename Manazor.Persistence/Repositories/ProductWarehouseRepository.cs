@@ -1,11 +1,14 @@
 ﻿using Manazor.Application.Interfaces.Repositories;
 using Manazor.Domain.Common.Interfaces;
 using Manazor.Domain.Entities;
+using Manazor.Domain.Entities.ProductModule;
+using Manazor.Domain.Entities.WarehouseModule;
 using Manazor.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -25,6 +28,9 @@ namespace Manazor.Persistence.Repositories
         public async Task<ProductWarehouse> AddAsync(ProductWarehouse entity)
         {
             await _dbContext.Set<ProductWarehouse>().AddAsync(entity);
+
+            await _dbContext.SaveChangesAsync();
+
             return entity;
         }
 
@@ -42,24 +48,22 @@ namespace Manazor.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<ProductWarehouse> GetByIdAsync(int productId, int warehouseId)
+        public async Task<ProductWarehouse?> GetByIdAsync(int productId, int warehouseId)
         {
-            ProductWarehouse? entity = await _dbContext.Set<ProductWarehouse>().FindAsync(productId, warehouseId);
-
-            if(entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            ProductWarehouse? entity = await _dbContext.Set<ProductWarehouse>().Where(p => p.ProductId == productId && p.WarehouseId == warehouseId).FirstAsync();
 
             return entity;
         }
-
         public async Task UpdateAsync(ProductWarehouse entity)
         {
-            ProductWarehouse? exist = await _dbContext.Set<ProductWarehouse>().FindAsync(entity.ProductId, entity.WarehouseId);
+            ProductWarehouse? exist = await _dbContext.Set<ProductWarehouse>().Where(p => p.ProductId == entity.ProductId && p.WarehouseId == entity.WarehouseId).FirstAsync();
 
             if (exist == null)
                 throw new ArgumentNullException(nameof(exist));
 
             _dbContext.Entry(exist).CurrentValues.SetValues(entity);
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

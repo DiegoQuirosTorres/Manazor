@@ -1,5 +1,8 @@
-﻿@using Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse;
+﻿@using Manazor.Application.Features.Products.Queries;
+@using Manazor.Application.Features.Warehouses.Command.AddProductsInWarehouses;
+@using Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse;
 @using Manazor.UI.Data;
+@using Manazor.UI.Pages.Forms;
 @using MediatR;
 @inject IMediator Mediator
 @inject IDialogService DialogService
@@ -11,14 +14,14 @@
                 <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                               AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0 mw-100"></MudTextField>
                 <MudSpacer />
-                <MudButton  Class="me-2" Variant="Variant.Filled" Color="Color.Info">Add <MudIcon Icon="@Icons.Material.Filled.Add"></MudIcon></MudButton>
+                <MudButton OnClick="() => OpenDialog()" Class="me-2" Variant="Variant.Filled" Color="Color.Info">Add <MudIcon Icon="@Icons.Material.Filled.Add"></MudIcon></MudButton>
             </ToolBarContent>
             <Columns>
                 <TemplateColumn Title="Name">
                     <CellTemplate>
                         <MudStack Row>
-                            <MudAvatar Size="Size.Medium">
-                                <MudImage Size="Size.Medium" Src="@($"data:image/png;base64,{Convert.ToBase64String(context.Item!.ProductPhoto!)}")" Alt="Product image"></MudImage>
+                            <MudAvatar Size="Size.Small">
+                                <MudImage Size="Size.Small" Src="@($"data:image/png;base64,{Convert.ToBase64String(context.Item!.ProductPhoto!)}")" Alt="Product image"></MudImage>
                             </MudAvatar>
                             <MudText>@context.Item.ProductName</MudText>
                         </MudStack>
@@ -34,7 +37,7 @@
                 </TemplateColumn>
                 <TemplateColumn Title="Quantity">
                     <CellTemplate>
-                        <MudText>@context.Item.Quantity €</MudText>
+                        <MudText>@context.Item.Quantity</MudText>
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>
@@ -74,6 +77,30 @@
         });
 
         StateHasChanged();
+    }
+
+    private async void OpenDialog()
+    {
+        var updateCallback = new Action(async () =>
+        {
+            await UpdateDataAsync();
+        });
+
+        AddProductsInWarehousesCommand command = new AddProductsInWarehousesCommand
+        {
+              WarehouseId = Id
+        };
+
+        var products = await Mediator.Send(new GetAllProducts());
+
+        DialogParameters parameters = new DialogParameters<AddStockForm>
+        {
+           { x => x.Callback, updateCallback },
+           { x => x.ComboData, products },
+           {x => x.Command, command},
+        };
+
+        DialogService.Show<AddStockForm>("Add Stock", parameters);
     }
 
 

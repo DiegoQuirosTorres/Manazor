@@ -33,10 +33,10 @@ namespace Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse
 
             List<GetProductsInWarehouseDto> result = new List<GetProductsInWarehouseDto>();
 
-            dtos.ForEach(async p => {
-                //for some reason Include with EF dont give me the entities of Product and Warehouse joined on ProductWarehouse, so i have to request them manually
+            foreach(var p in dtos)
+            {
                 var product = await _unitOfWork.Repository<Product>().GetByIdAsync(p.ProductId);
-
+                //for some reason Include with EF dont give me the entities of Product and Warehouse joined on ProductWarehouse, so i have to request them manually
                 var category = await _unitOfWork.Repository<Category>().GetByIdAsync(product.Category);
 
                 result.Add(new GetProductsInWarehouseDto
@@ -50,7 +50,7 @@ namespace Manazor.Application.Features.Warehouses.Queries.GetProductsInWarehouse
                     CategoryName = category.Name,
                     LogoId = category.LogoId,
                 });
-            });
+            }
 
             return result;
         }

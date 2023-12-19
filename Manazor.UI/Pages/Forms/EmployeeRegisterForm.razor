@@ -33,13 +33,13 @@
                     </div>
 
                     <div class="row d-flex justify-content-between">
-                        <MudDatePicker Class="me-6" Label="BirthDate" @bind-Value="Command.BirthDate" />
+                        <MudDatePicker Class="me-6" Label="BirthDate" @bind-Date="Command.BirthDate" />
                             <MudTextField Class="me-6" T="string" @bind-Value="Command.Password" Label="Password" Variant="Variant.Text"></MudTextField>
                             <MudTextField T="string" Label="Province" Variant="Variant.Text" @bind-Value="Command.Province"></MudTextField>
                     </div>
                     <div class="row d-flex justify-content-between">
-                        <MudTextField Class="me-6" T="string" Label="Town" Variant="Variant.Text"></MudTextField>
-                        <MudTextField T="string" Label="Address" Variant="Variant.Text" @bind-Value="Command.Province"></MudTextField>
+                        <MudTextField Class="me-6" T="string" Label="Town" @bind-Value="Command.City" Variant="Variant.Text"></MudTextField>
+                        <MudTextField T="string" Label="Address" Variant="Variant.Text" @bind-Value="Command.Address"></MudTextField>
                     </div>
                 </div>
             </div>
@@ -68,10 +68,12 @@
     {
         if (IsEdit)
         {
-           
+
         }
         else
         {
+            Command.Email = Command.Name + Command.Surname.Substring(0, 1) + "@manazor.com";
+
             await Mediator.Send(Command);
         }
 

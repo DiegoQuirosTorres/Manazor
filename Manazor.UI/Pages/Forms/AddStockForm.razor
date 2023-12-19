@@ -1,5 +1,60 @@
-﻿<h3>AddStockForm</h3>
+﻿@using Application.Features.Warehouses.Command.AddProductsInWarehouses;
+@using Manazor.Application.Features.Products.Queries;
+@using MediatR;
+@inject IMediator Mediator
+<MudDialog Style="width: 40rem;">
+    <DialogContent>
+        <MudForm>
+            <div class="d-flex flex-row" style="justify-content: space-between;">
+                    <MudSelect Class="me-5" T="int" Label="Product " MultiSelection="false" @bind-Value="Command.ProductId">
+                        @foreach (var product in ComboData)
+                        {
+                            <MudSelectItem Style="height: 3rem;" T="int" Value=@product.Id>
+                            <div class="d-flex flex-row" style="justify-content: space-between;">
+                                    <MudAvatar Size="Size.Medium">
+                                        <MudImage Size="Size.Medium" Src="@($"data:image/png;base64,{Convert.ToBase64String(product.Photo)}")" Alt="Product image"></MudImage>
+                                    </MudAvatar>
+                                    @product.Name
+                                </div>
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField Label="Quantity" @bind-Value="Command.Quantity" Type="InputType.Number" />
+                </div>
+            <div class="row d-flex mt-2" style="justify-content: end">
+                <MudButton OnClick="Cancel">Cancel</MudButton>
+                <MudButton Color="Color.Info" OnClick="Submit">Add Stock</MudButton>
+            </div>
+        </MudForm>
+    </DialogContent>
+</MudDialog>
+@code
+{
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public AddProductsInWarehousesCommand Command { get; set; } = new AddProductsInWarehousesCommand();
+    [Parameter] public List<GetAllProductsDto> ComboData { get; set; } = null!;
+    [Parameter] public Action Callback { get; set; } = null!;
 
-@code {
+    private async Task Submit()
+    {
+        await Mediator.Send(Command);
 
+        Callback.Invoke();
+
+        Command = new();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private string GetStyle(string color)
+    {
+        return "font-size: 1rem; color: " + color;
+    }
+
+    private void Cancel()
+    {
+        Command = new();
+
+        MudDialog.Cancel();
+    }
 }

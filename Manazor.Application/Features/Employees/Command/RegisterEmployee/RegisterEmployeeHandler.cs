@@ -32,6 +32,7 @@ namespace Manazor.Application.Features.Employees.Command.RegisterEmployee
                 Address = request.Address,
                 City = request.City,
                 Province = request.Province,
+                BirthDate = request.BirthDate,
                 WorkCenterId = request.WorkCenterId,
         };
 

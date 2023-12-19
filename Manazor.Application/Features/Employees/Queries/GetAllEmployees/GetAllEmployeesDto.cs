@@ -12,5 +12,13 @@ namespace Manazor.Application.Features.Employees.Queries.GetAllEmployees
 	{
 		public string Name { get; set; } = null!;
 		public string Surname { get; set; } = null!;
+		public byte[]? Photo { get; set;}
+		public string? Address { get; set; } = string.Empty;
+		public string? City { get; set; } = string.Empty;
+		public string? Province { get; set;} = string.Empty;
+		public string? WorkCenterName { get; set; } = string.Empty;
+		public int? WorkCenterId { get; set; }
+		public string Email { get; set; } = string.Empty;
+		public DateTime? BirthDate { get; set; }
 	}
 }

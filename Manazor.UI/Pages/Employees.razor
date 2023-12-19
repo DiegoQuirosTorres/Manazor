@@ -19,7 +19,7 @@ else
 {
     <MudText Class="mb-2" Typo="Typo.h6">Employees</MudText>
 
-    <MudDataGrid T="GetAllEmployeesDto" MultiSelection="true" Items="@employees" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+    <MudDataGrid T="GetAllEmployeesDto" MultiSelection="true" Items="@employees" SortMode="SortMode.Multiple" QuickFilter="@_quickFilter"
                  Hideable="true">
         <ToolBarContent>
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
@@ -28,11 +28,63 @@ else
             <MudButton OnClick="() => OpenDialog(false, null)" Class="me-2" Variant="Variant.Filled" Color="Color.Info">Add <MudIcon Icon="@Icons.Material.Filled.Add"></MudIcon></MudButton>
         </ToolBarContent>
         <Columns>
-            <PropertyColumn Property="x => x.Name" />
-            <PropertyColumn Property="x => x.Surname" />
-            <TemplateColumn CellClass="d-flex justify-end">
+            <TemplateColumn Filterable="false" Title="Employee">
                 <CellTemplate>
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="_ => OpenDialog(true, context.Item)" />
+                    <div class="d-flex">
+                        <MudAvatar Class="me-3" Size="Size.Medium">
+                            @if(context.Item.Photo == null)
+                            {
+                                <MudImage Size="Size.Medium" Src="assets/placeholder/placeholder.jpg" Alt="Product image"></MudImage>
+                            }
+                            else
+                            {
+                                <MudImage Size="Size.Medium" Src="@($"data:image/png;base64,{Convert.ToBase64String(context.Item.Photo)}")" Alt="Product image"></MudImage>
+                            }
+                        </MudAvatar>
+                        <div class="d-flex flex-column">
+                            <span style="font-weight: bold">@context.Item.Name @context.Item.Surname</span>
+                            <span>@context.Item.Email</span>
+                        </div>
+                    </div>
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn  Title="Address">
+                <CellTemplate>
+                    <div class="d-flex">
+                       <div class="me-2">@context.Item.Address</div>
+                        <div class="me-2">@context.Item.City</div>
+                        <div>@context.Item.Province</div>
+                    </div>
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="Birthdate">
+                <CellTemplate>
+                    @if(context.Item.BirthDate == null)
+                    {
+                        <div>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div>
+                            @context.Item.BirthDate
+                        </div>
+                    }
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="Workcenter">
+                <CellTemplate>
+                    <div>
+                        @context.Item.WorkCenterName;
+                    </div>
+                </CellTemplate>
+            </TemplateColumn>
+            <TemplateColumn Title="Actions">
+                <CellTemplate>
+                    <div class="d-flex justify-emnd">
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="_ => OpenDialog(true, context.Item)" />
+                    </div>
                 </CellTemplate>
             </TemplateColumn>
         </Columns>

@@ -26,5 +26,7 @@ namespace Manazor.Domain.Entities
 
 		public int? WorkCenterId { get; set; }
 
+		public DateTime? BirthDate { get; set; }
+
     }
 }
