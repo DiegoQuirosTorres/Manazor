@@ -9,18 +9,19 @@
 @using Manazor.UI.Data;
 @using Manazor.UI.Pages.Components
 @using MediatR;
+@inject IDialogService DialogService
 @inject IMediator Mediator
 <MudDialog Style="width: 50rem;">
     <DialogContent>
-        <MudForm Model="Command">
+        <MudForm @ref="form" Model="Command">
 
             <div class="d-flex flex-row" style="justify-content: space-around;">
                 <div>
-                    <ImageUpload OnUpdatedPhoto="OnImageChangeCallBack"></ImageUpload>
+                    <ImageUpload ImageData="@Command.Photo" OnUpdatedPhoto="OnImageChangeCallBack"></ImageUpload>
                 </div>
                 <div class="h-100 d-flex flex-column" style="justify-content: space-around;">
                     <div class="d-flex" style="justify-content: space-between;">
-                        <MudTextField Class="me-6" Label="Name" @bind-Value="Command.Name" Required="true" />
+                        <MudTextField Validation="@(new[] { new Func<string, string>(ValidateField) })" Class="me-6" Label="Name" @bind-Value="Command.Name" Required="true" />
                         <MudSpacer></MudSpacer>
                         <MudSelect T="int" Label="Categories " MultiSelection="false" @bind-Value="Command.Category">
                             @foreach (var category in ComboData)
@@ -34,8 +35,8 @@
                         <MudTextField Class="me-6" T="string" Label="Description" Variant="Variant.Text" @bind-Value="Command.Description" Lines="5" />
 
                         <div class="d-flex flex-column" style="justify-content: space-between;">
-                            <MudTextField T="double" Label="Price" Variant="Variant.Text" @bind-Value="Command.Price"></MudTextField>
-                            <MudTextField T="int" Label="Minimum Threshold" Variant="Variant.Text" @bind-Value="Command.LowQuantity"></MudTextField>
+                            <MudTextField Validation="@(new[] { new Func<string, string>(ValidateField) })" T="double" Label="Price" Variant="Variant.Text" @bind-Value="Command.Price"></MudTextField>
+                            <MudTextField Validation="@(new[] { new Func<string, string>(ValidateField) })" T="int" Label="Minimum Threshold" Variant="Variant.Text" @bind-Value="Command.LowQuantity"></MudTextField>
                         </div>
                     </div>
                 </div>
@@ -58,23 +59,53 @@
     [Parameter] public int? Id { get; set; }
     [Parameter] public CreateProductsCommand Command { get; set; } = new CreateProductsCommand();
     [Parameter] public List<GetAllCategoriesDto> ComboData { get; set; } = new();
+    MudForm form = new MudForm();
 
     private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
 
     private async Task Submit()
     {
+        await form.Validate();
+
+        if (!form.IsValid)
+        {
+            return;
+        }
+
+        var confirmCallback = new Action(async () =>
+        {
+            await Confirm();
+        });
+
+        DialogParameters parameters = new DialogParameters<ConfirmationDialog>
+        {
+           { x => x.Callback, confirmCallback },
+        };
+
+        DialogService.Show<ConfirmationDialog>("Confirm", parameters);
+    }
+
+    private string ValidateField(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return "This field is required.";
+        return null;
+    }
+
+    private async Task Confirm()
+    {
         if (IsEdit)
         {
             EditProductCommand product = new EditProductCommand
-            {
-              Id = Id!.Value,
-              Category = Command.Category,
-              Description = Command.Description,
-              LowQuantity = Command.LowQuantity,
-              Name = Command.Name,
-              Photo = Command.Photo,
-              Price = Command.Price
-            };
+                {
+                    Id = Id!.Value,
+                    Category = Command.Category,
+                    Description = Command.Description,
+                    LowQuantity = Command.LowQuantity,
+                    Name = Command.Name,
+                    Photo = Command.Photo,
+                    Price = Command.Price
+                };
             await Mediator.Send(product);
         }
         else

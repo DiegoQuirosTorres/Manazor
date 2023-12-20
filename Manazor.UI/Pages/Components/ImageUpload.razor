@@ -1,7 +1,7 @@
 ﻿@inherits ComponentBase
 
     <div style="width: max-content; height: max-content; position: relative; background-color: rgb(244, 244, 244);">
-        @if (_imageData == null)
+    @if (ImageData == null)
         {
             <img src="@_placeholderImage" alt="Placeholder" class="card-img-top" style="height: 12rem; width: 10rem; object-fit: scale-down;" />
             <div class="card-body text-center" style="position: absolute; bottom: 15px; right: 15px;">
@@ -18,7 +18,7 @@
         }
         else
         {
-            <img src="@($"data:image/png;base64,{Convert.ToBase64String(_imageData)}")"
+        <img src="@($"data:image/png;base64,{Convert.ToBase64String(ImageData)}")"
                  alt="Uploaded Image" class="img-thumbnail"
                  style="height: 12rem; width: 10rem; object-fit: fill;" />
 
@@ -34,7 +34,10 @@
 @code
 {
     private string _placeholderImage = "assets/placeholder/placeholder.jpg";
-    private byte[] _imageData;
+
+    [Parameter]
+    public byte[] ImageData { get; set; }
+
     [Parameter]
     public EventCallback<byte[]> OnUpdatedPhoto { get; set; }
 
@@ -45,15 +48,15 @@
             using (var memoryStream = new MemoryStream())
             {
                 await file.OpenReadStream().CopyToAsync(memoryStream);
-                _imageData = memoryStream.ToArray();
+                ImageData = memoryStream.ToArray();
             }
-            await OnUpdatedPhoto.InvokeAsync(_imageData);
+            await OnUpdatedPhoto.InvokeAsync(ImageData);
         }
     }
 
     private async void ClearPhoto()
     {
-        _imageData = null;
-        await OnUpdatedPhoto.InvokeAsync(_imageData);
+        ImageData = null;
+        await OnUpdatedPhoto.InvokeAsync(ImageData);
     }
 }

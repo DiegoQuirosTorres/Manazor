@@ -11,8 +11,8 @@ namespace Manazor.Application.Features.Warehouses.Command.AddProductsInWarehouse
     {
         public int WarehouseId { get; set; }
 
-        public int ProductId { get; set; } = 1;
+        public int ProductId { get; set; }
 
-        public int Quantity { get; set; } = 1;
+        public int Quantity { get; set; }
     }
 }

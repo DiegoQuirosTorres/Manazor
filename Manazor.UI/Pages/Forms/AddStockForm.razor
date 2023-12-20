@@ -1,12 +1,14 @@
 ﻿@using Application.Features.Warehouses.Command.AddProductsInWarehouses;
 @using Manazor.Application.Features.Products.Queries;
+@using Manazor.UI.Pages.Components;
 @using MediatR;
+@inject IDialogService DialogService
 @inject IMediator Mediator
 <MudDialog Style="width: 40rem;">
     <DialogContent>
         <MudForm>
             <div class="d-flex flex-row" style="justify-content: space-between;">
-                    <MudSelect Class="me-5" T="int" Label="Product " MultiSelection="false" @bind-Value="Command.ProductId">
+                <MudSelect Class="me-5" T="int" Label="Product " Validation="@(new[] { new Func<int, string>(ValidateProduct) })" MultiSelection="false" @bind-Value="Command.ProductId">
                         @foreach (var product in ComboData)
                         {
                             <MudSelectItem Style="height: 3rem;" T="int" Value=@product.Id>
@@ -19,7 +21,7 @@
                             </MudSelectItem>
                         }
                     </MudSelect>
-                    <MudTextField Label="Quantity" @bind-Value="Command.Quantity" Type="InputType.Number" />
+                <MudNumericField Validation="@(new[] { new Func<int, string>(ValidateQuantity) })" Label="Quantity" @bind-Value="Command.Quantity" Type="InputType.Number" />
                 </div>
             <div class="row d-flex mt-2" style="justify-content: end">
                 <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -36,6 +38,35 @@
     [Parameter] public Action Callback { get; set; } = null!;
 
     private async Task Submit()
+    {
+        var confirmCallback = new Action(async () =>
+        {
+            await Confirm();
+        });
+
+        DialogParameters parameters = new DialogParameters<ConfirmationDialog>
+        {
+           { x => x.Callback, confirmCallback },
+        };
+
+        DialogService.Show<ConfirmationDialog>("Confirm", parameters);
+    }
+
+    private string ValidateProduct(int value)
+    {
+        if (value == null)
+            return "Product is required.";
+        return null;
+    }
+
+    private string ValidateQuantity(int value)
+    {
+        if (value == null)
+            return "Product is required.";
+        return null;
+    }
+
+    public async Task Confirm()
     {
         await Mediator.Send(Command);
 

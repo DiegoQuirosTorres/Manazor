@@ -7,7 +7,7 @@
 
 <MudContainer Class="d-flex" Style="height: 100vh; width: 100vw; justify-content: center;">
     <MudPaper Width="20rem" Elevation="3" Style="margin: auto;">
-        <MudContainer Class="d-flex flex-column" Style="align-items: center">      
+        <MudContainer Class="d-flex flex-column" Style="align-items: center; height: 25rem; justify-content: space-between">      
 
                 <div class="text-center">
                     <MudImage Src="assets/logo/LogoV1.png" Width="120" Height="120" />
@@ -19,6 +19,13 @@
                 </MudForm>
 
                 <MudButton Variant="Variant.Filled" Color="Color.Info" Class="mt-4 mb-4" OnClick="OnClickLogin">Login</MudButton>
+
+                @if (!string.IsNullOrEmpty(_errorMessage))
+                {
+                    <div style="color: red;">
+                        @_errorMessage
+                    </div>
+                }
         </MudContainer>
     </MudPaper>
 </MudContainer>
@@ -27,6 +34,7 @@
     [Parameter] public Action CallBack { get; set; } = null!;
     private string _username = "";
     private string _password = "";
+    private string _errorMessage = "";
     private InputType _passwordInput = InputType.Password;
     private string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
     private bool _isShow = false;
@@ -68,6 +76,11 @@
     {
         await form.Validate();
 
+        if (!form.IsValid)
+        {
+            return;
+        }
+
         var user = await Mediator.Send(new LoginCommand
             {
                 Email = _username,
@@ -76,8 +89,15 @@
 
         if(user != null)
         {
+            _errorMessage = "";
             await StoreCookie(user);
             CallBack.Invoke();
+        }
+        else
+        {
+            _errorMessage = "The user or the password are incorrect";
+
+            StateHasChanged();
         }
     }
 

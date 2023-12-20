@@ -1,8 +1,10 @@
 ﻿@using Manazor.Application.Features.Categories.Command.Create;
 @using Manazor.Application.Features.Categories.Command.Edit;
 @using Manazor.UI.Data;
+@using Manazor.UI.Pages.Components;
 @using MediatR;
 @using MudBlazor.Utilities;
+@inject IDialogService DialogService
 @inject IMediator Mediator
 <MudDialog Style="width: 40rem;">
     <DialogContent>
@@ -46,6 +48,21 @@
     [Parameter] public string CategoryName { get; set; } = "";
 
     private async Task Submit()
+    {
+        var confirmCallback = new Action(async () =>
+       {
+            await Confirm();
+       });
+
+        DialogParameters parameters = new DialogParameters<ConfirmationDialog>
+        {
+           { x => x.Callback, confirmCallback },
+        };
+
+        DialogService.Show<ConfirmationDialog>("Confirm", parameters);
+    }
+
+    public async Task Confirm()
     {
         if (IsEdit)
         {

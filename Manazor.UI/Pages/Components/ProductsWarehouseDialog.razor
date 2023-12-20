@@ -45,10 +45,14 @@
                 <MudDataGridPager T="GetProductsInWarehouseDto" />
             </PagerContent>
         </MudDataGrid>
+        <div class="row d-flex mt-2" style="justify-content: end">
+            <MudButton OnClick="Close">Close</MudButton>
+        </div>
     </DialogContent>
 </MudDialog>
 
 @code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
     private List<GetProductsInWarehouseDto>? products;
     private string _searchString;
     [Parameter] public int Id { get; set; }
@@ -101,6 +105,11 @@
         };
 
         DialogService.Show<AddStockForm>("Add Stock", parameters);
+    }
+
+    private void Close()
+    {
+        MudDialog.Cancel();
     }
 
 

@@ -29,6 +29,6 @@ namespace Manazor.Application.Features.Employees.Command.RegisterEmployee
 
         public int WorkCenterId { get; set; } = 1;
 
-        public int RoleId { get; set; }
+        public int RoleId { get; set; } = 1;
     }
 }

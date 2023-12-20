@@ -11,6 +11,7 @@
 @using Manazor.UI.Data;
 @using Manazor.UI.Pages.Components
 @using MediatR;
+@inject IDialogService DialogService
 @inject IMediator Mediator
 <MudDialog Style="width: 60rem;">
     <DialogContent>
@@ -73,6 +74,21 @@
     private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
 
     private async Task Submit()
+    {
+        var confirmCallback = new Action(async () =>
+        {
+            await Confirm();
+        });
+
+        DialogParameters parameters = new DialogParameters<ConfirmationDialog>
+        {
+           { x => x.Callback, confirmCallback },
+        };
+
+        DialogService.Show<ConfirmationDialog>("Confirm", parameters);
+    }
+
+    private async Task Confirm()
     {
         if (IsEdit)
         {

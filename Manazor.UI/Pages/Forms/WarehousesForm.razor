@@ -1,17 +1,20 @@
 ﻿@using Manazor.Application.Features.Employees.Queries.GetAllEmployees;
 @using Manazor.Application.Features.Warehouses.Command.Create;
+@using Manazor.Application.Features.Warehouses.Command.Edit;
 @using Manazor.Application.Features.WorkCenters.Commands.Create;
 @using Manazor.Application.Features.WorkCenters.Commands.Update;
+@using Manazor.UI.Pages.Components;
 @using MediatR;
+@inject IDialogService DialogService
 @inject IMediator Mediator
 <MudDialog Style="width: 40rem;">
     <DialogContent>
-        <MudForm Model="command">
+        <MudForm @ref="form" Model="command">
 
             <div class="row d-flex justify-content-between">
-                <MudTextField Label="Name" @bind-Value="command.Name" Required="true" />
+                <MudTextField Validation="@(new[] { new Func<string, string>(ValidateWarehouseName) })" Label="Name" @bind-Value="command.Name" Required="true" />
                 <MudSpacer></MudSpacer>
-                <MudAutocomplete T="GetAllWorkCentersDto" Label="Workcenter" @bind-Value="command.WorkCenterDto" ToStringFunc="(i => DisplayValue(i))" SearchFunc="@SearchCombo"
+                <MudAutocomplete Validation="@(new[] { new Func<GetAllWorkCentersDto, string>(ValidateWorkCenter) })" Disabled="@isEdit" T="GetAllWorkCentersDto" Label="Workcenter" @bind-Value="command.WorkCenterDto" ToStringFunc="(i => DisplayValue(i))" SearchFunc="@SearchCombo"
                                  AdornmentIcon="@Icons.Material.Filled.Search"  />
             </div>
 
@@ -32,22 +35,43 @@
     [Parameter] public int? id { get; set; }
     [Parameter] public CreateWarehouseCommand command { get; set; } = new CreateWarehouseCommand();
     [Parameter] public List<GetAllWorkCentersDto> comboData { get; set; } = new();
-    
+    MudForm form = new MudForm();
+
     private Func<GetAllWorkCentersDto, string?> DisplayValue = item => item is null ? null : item.Denomination;
 
     private async Task Submit()
     {
+        await form.Validate();
+
+        if (!form.IsValid)
+        {
+            return;
+        }
+
+        var confirmCallback = new Action(async () =>
+        {
+            await Confirm();
+        });
+
+        DialogParameters parameters = new DialogParameters<ConfirmationDialog>
+        {
+           { x => x.Callback, confirmCallback },
+        };
+
+        DialogService.Show<ConfirmationDialog>("Confirm", parameters);
+    }
+
+    public async Task Confirm()
+    {
         if (isEdit)
         {
-            /* UpdateWorkCenterCommand workCenter = new UpdateWorkCenterCommand
-                     {
-                     Address = command.Address,
-                     City = command.City,
-                     Denomination = command.Denomination,
-                     Province = command.Province,
-                     Id = id!.Value,
-             };
-             await Mediator.Send(workCenter);*/
+            EditWarehouseCommand editCommand = new EditWarehouseCommand
+                {
+                    Id = id.Value,
+                    Name = command.Name
+                };
+
+            await Mediator.Send(editCommand);
         }
         else
         {
@@ -59,6 +83,20 @@
         command = new();
 
         MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private string ValidateWarehouseName(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return "Name is required.";
+        return null;
+    }
+
+    private string ValidateWorkCenter(GetAllWorkCentersDto value)
+    {
+        if (value == null)
+            return "Password is required.";
+        return null;
     }
 
     private async Task<IEnumerable<GetAllWorkCentersDto>> SearchCombo(string value)

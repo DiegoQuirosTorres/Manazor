@@ -25,7 +25,7 @@ namespace Manazor.Application.Features.Employees.Command.RegisterEmployee
             Employee employee = new Employee
             {
                 Name = request.Name,
-                Email = request.Email,
+                Email = request.Email.ToLower(),
                 Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
                 Photo = request.Photo,
                 Surname = request.Surname,

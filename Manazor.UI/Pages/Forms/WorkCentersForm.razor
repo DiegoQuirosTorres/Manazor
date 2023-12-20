@@ -1,20 +1,22 @@
 ﻿@using Manazor.Application.Features.WorkCenters.Commands.Create;
 @using Manazor.Application.Features.WorkCenters.Commands.Update;
+@using Manazor.UI.Pages.Components;
 @using MediatR;
+@inject IDialogService DialogService
 @inject IMediator Mediator
 <MudDialog IsVisibleChanged="DialogVisibleChanged" Style="width: 40rem;">
     <DialogContent>
-        <MudForm Model="command">
+        <MudForm @ref="form" Model="command">
 
-            <MudTextField Class="col col-6" Label="Denomination" @bind-Value="command.Denomination" Required="true" />
+            <MudTextField Class="col col-6" Validation="@(new[] { new Func<string, string>(ValidateField) })" Label="Denomination" @bind-Value="command.Denomination" Required="true" />
 
             <div class="row d-flex justify-content-between">
-                <MudTextField Label="City" @bind-Value="command.City" Required="true" />
+                <MudTextField Validation="@(new[] { new Func<string, string>(ValidateField) })" Label="City" @bind-Value="command.City" Required="true" />
                 <MudSpacer></MudSpacer>
-                <MudTextField Label="Province" @bind-Value="command.Province" Required="true" />
+                <MudTextField Validation="@(new[] { new Func<string, string>(ValidateField) })" Label="Province" @bind-Value="command.Province" Required="true" />
             </div>
 
-            <MudTextField Label="Address" @bind-Value="command.Address" Required="true" />
+            <MudTextField Validation="@(new[] { new Func<string, string>(ValidateField) })" Label="Address" @bind-Value="command.Address" Required="true" />
 
             <div class="row d-flex mt-2" style="justify-content: end">
                 <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -32,6 +34,7 @@
     [Parameter] public bool isEdit { get; set; }
     [Parameter] public int? id { get; set; }
     [Parameter] public CreateWorkCenterCommand command { get; set; } = new CreateWorkCenterCommand();
+    MudForm form = new MudForm();
 
     void DialogVisibleChanged(bool isVisible)
     {
@@ -41,7 +44,36 @@
         }
     }
 
+    private string ValidateField(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return "This field is required.";
+        return null;
+    }
+
     private async Task Submit()
+    {
+        await form.Validate();
+
+        if (!form.IsValid)
+        {
+            return;
+        }
+
+        var confirmCallback = new Action(async () =>
+        {
+            await Confirm();
+        });
+
+        DialogParameters parameters = new DialogParameters<ConfirmationDialog>
+        {
+           { x => x.Callback, confirmCallback },
+        };
+
+        DialogService.Show<ConfirmationDialog>("Confirm", parameters);
+    }
+
+    public async Task Confirm()
     {
         if (isEdit)
         {

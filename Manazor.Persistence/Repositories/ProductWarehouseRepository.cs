@@ -50,13 +50,13 @@ namespace Manazor.Persistence.Repositories
 
         public async Task<ProductWarehouse?> GetByIdAsync(int productId, int warehouseId)
         {
-            ProductWarehouse? entity = await _dbContext.Set<ProductWarehouse>().Where(p => p.ProductId == productId && p.WarehouseId == warehouseId).FirstAsync();
+            ProductWarehouse? entity = await _dbContext.Set<ProductWarehouse>().Where(p => p.ProductId == productId && p.WarehouseId == warehouseId).FirstOrDefaultAsync();
 
             return entity;
         }
         public async Task UpdateAsync(ProductWarehouse entity)
         {
-            ProductWarehouse? exist = await _dbContext.Set<ProductWarehouse>().Where(p => p.ProductId == entity.ProductId && p.WarehouseId == entity.WarehouseId).FirstAsync();
+            ProductWarehouse? exist = await _dbContext.Set<ProductWarehouse>().Where(p => p.ProductId == entity.ProductId && p.WarehouseId == entity.WarehouseId).FirstOrDefaultAsync();
 
             if (exist == null)
                 throw new ArgumentNullException(nameof(exist));

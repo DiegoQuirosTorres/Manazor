@@ -19,7 +19,7 @@ else
 {
     <MudText Class="mb-2" Typo="Typo.h6">Warehouses</MudText>
 
-    <MudDataGrid T="GetAllWarehousesDto" MultiSelection="true" Items="@warehouses" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+    <MudDataGrid T="GetAllWarehousesDto" MultiSelection="true" Items="@warehouses" QuickFilter="@_quickFilter"
                  Hideable="true" RowClick="@OpenOverview">
         <ToolBarContent>
             <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
@@ -29,14 +29,21 @@ else
         </ToolBarContent>
         <Columns>
             <PropertyColumn Property="x => x!.Name" />
+            <TemplateColumn Title="Workcenter">
+                <CellTemplate>
+                    <div class="d-flex">
+                        <div>@context.Item.WorkCenterName</div>
+                    </div>
+                </CellTemplate>
+            </TemplateColumn>
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="_ => {}" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick=" ()=> OpenDialog(true, context.Item)" />
                 </CellTemplate>
             </TemplateColumn>
         </Columns>
         <PagerContent>
-            <MudDataGridPager T="GetAllWorkCentersDto" />
+            <MudDataGridPager T="GetAllWarehousesDto" />
         </PagerContent>
     </MudDataGrid>
 }
@@ -74,7 +81,7 @@ else
            { x => x.Id, args.Item.WorkCenterId},
         };
 
-        DialogService.Show<ProductsWarehouseDialog>(args.Item.Name, parameters);
+        DialogService.Show<ProductsWarehouseDialog>("Stock of " + args.Item.Name, parameters);
     }
 
     private async Task OpenDialog(bool isEdit, GetAllWarehousesDto? dto)
@@ -89,8 +96,13 @@ else
            { x => x.comboData, await Mediator.Send(new GetAllWorkCenters())},
            { x => x.callback, updateCallback },
            { x => x.isEdit, isEdit },
-           { x => x.command, dto != null ? null
-                    :  new CreateWarehouseCommand() },
+           { x => x.command, dto != null
+                ? new CreateWarehouseCommand()
+                   {
+                     Name = dto.Name,
+                     WorkCenterDto = new GetAllWorkCentersDto()
+                   }
+                :  new CreateWarehouseCommand() },
            {x => x.id, dto != null ? dto.Id : null}
         };
 

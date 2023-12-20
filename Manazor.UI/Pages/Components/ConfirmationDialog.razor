@@ -10,11 +10,11 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
-    [Parameter] public Action callback { get; set; } = null!;
+    [Parameter] public Action Callback { get; set; } = null!;
 
     private async Task Confirm()
     {
-        callback.Invoke();
+        Callback.Invoke();
 
         MudDialog.Close(DialogResult.Ok(true));
     }
